@@ -1,8 +1,21 @@
 # Gipuma
 
+
 Source code for the paper:
 
 S. Galliani, K. Lasinger and K. Schindler, [Massively Parallel Multiview Stereopsis by Surface Normal Diffusion](http://www.prs.igp.ethz.ch/content/dam/ethz/special-interest/baug/igp/photogrammetry-remote-sensing-dam/documents/pdf/galliani-lasinger-iccv15.pdf), ICCV 2015
+
+
+**IMPORTANT**: If you use this software please cite the following in any resulting publication:
+```
+@inproceedings{galliani15_iccv,
+    Title={Massively Parallel Multiview Stereopsis by Surface Normal Diffusion},
+    Author={Galliani, Silvano and Lasinger, Katrin and Schindler, Konrad},
+    Booktitle = {Proc. of the IEEE International Conference on Computer Vision (ICCV)},
+    Year = {2015},
+    Month = {December}
+}
+```
 
 ## Requirements:
  - Cuda >= 6.0
