@@ -5,6 +5,7 @@
 #include <ctime>
 
 #ifdef _WIN32
+#include <windows.h>
 #include <direct.h>
 #endif
 
@@ -511,7 +512,6 @@ static void addImageToTextureUint (vector<Mat_<uint8_t> > &imgs, cudaTextureObje
                                //cudaChannelFormatKindUnsigned);
         cudaCreateChannelDesc<char>();
         // Allocate array with correct size and number of channels
-        cudaArray *cuArray[i];
         checkCudaErrors(cudaMallocArray(&cuArray[i],
                                         &channelDesc,
                                         cols,
