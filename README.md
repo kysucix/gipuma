@@ -5,6 +5,10 @@ Source code for the paper:
 
 S. Galliani, K. Lasinger and K. Schindler, [Massively Parallel Multiview Stereopsis by Surface Normal Diffusion](http://www.prs.igp.ethz.ch/content/dam/ethz/special-interest/baug/igp/photogrammetry-remote-sensing-dam/documents/pdf/galliani-lasinger-iccv15.pdf), ICCV 2015
 
+## Authors
+- [Silvano Galliani](silvano.galliani@geod.baug.ethz.ch)
+- [Katrin Lasinger](katrin.lasinger@geod.baug.ethz.ch)
+
 
 **IMPORTANT**: If you use this software please cite the following in any resulting publication:
 ```
@@ -18,12 +22,18 @@ S. Galliani, K. Lasinger and K. Schindler, [Massively Parallel Multiview Stereop
 ```
 
 ## Requirements:
- - Cuda >= 6.0
+ - [Cuda](https://developer.nvidia.com/cuda-downloads) >= 6.0
  - Nvidia video card with compute capability at least 3.0, see https://en.wikipedia.org/wiki/CUDA#Supported_GPUs
  - [Opencv](http://opencv.org) >= 2.4
  - [cmake](http://cmake.org)
+ 
+ ## Tested Operating Systems
+ - Ubuntu GNU/Linux 14.04
+ - Windows with Visual Studio 2012/2013 (it's working directly with cmake)
 
 ## How to compile it
+Just use cmake for both Windows and Linux.
+For linux it gets as easy as:
 ```bash
 cmake .
 make
