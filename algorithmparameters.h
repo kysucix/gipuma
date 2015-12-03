@@ -67,7 +67,7 @@ public:
          good_factor       = 1.5f; // for cost aggregation/combination good: factor for truncation CUDA
         n_best             = 2; // CUDA
         cost_comb          = 1; // CUDA
-        viewSelection      = false;
+        viewSelection      = true;
         depthMin           = -1.0f; // CUDA
         depthMax           = -1.0f; // CUDA
         min_angle          = 5.0f; // CUDA
