@@ -27,7 +27,7 @@ S. Galliani, K. Lasinger and K. Schindler, [Massively Parallel Multiview Stereop
  - [Opencv](http://opencv.org) >= 2.4
  - [cmake](http://cmake.org)
  
- ## Tested Operating Systems
+## Tested Operating Systems
  - Ubuntu GNU/Linux 14.04
  - Windows with Visual Studio 2012/2013 (it's working directly with cmake)
 
