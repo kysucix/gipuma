@@ -49,7 +49,18 @@ For each camera gipuma need to compute the _noisy_ depthmap. The final fusion of
 ## Examples
  TODO
 ### Middlebury
- TODO
+ inside gipuma directory first download middlebury data
+ ```bash
+ ./scripts/download-middlebury.sh
+ ./scripts/download-middlebury.sh
+ ```
+ Then run the model you prefer
+ ```bash
+ ./scripts/dinoSparseRing.sh
+ ```
+ It's only missing the background removal, otherwise the result should match
+ the one sent to middlury benchmark ( and after Poisson reconstruction)
+
 
 ### DTU dataset
 http://roboimagedata.compute.dtu.dk/?page_id=24
