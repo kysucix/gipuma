@@ -415,8 +415,10 @@ static int getParametersFromCommandLine ( int argc,
         cout << "Camera idx " << camera_idx << endl;
         std::swap( inputFiles.img_filenames[0], inputFiles.img_filenames[camera_idx]);
     }
+    cout << "Input files are: ";
     for (const auto i: inputFiles.img_filenames)
-        cout << "Input files are " << i  << endl;
+        cout <<  i  << " ";
+    cout <<  endl;
 
     return 0;
 }
