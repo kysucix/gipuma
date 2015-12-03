@@ -58,8 +58,8 @@ For each camera gipuma need to compute the _noisy_ depthmap. The final fusion of
  ```bash
  ./scripts/dinoSparseRing.sh
  ```
- It's only missing the background removal, otherwise the result should match
- the one sent to middlury benchmark ( and after Poisson reconstruction)
+ It's only missing the background removal (black pixel < 15 get rejected in the fusion), otherwise the result should match
+ the one sent to middlebury benchmark (excl. Poisson reconstruction)
 
 
 ### DTU dataset
@@ -75,7 +75,7 @@ Gipuma relies on known camera information. You can provide this information in 3
 | -------------- | --------------------------------- | --------------- |
 | pmvs_folder | -pmvs_folder \<folder\> | The easiest way is to point gipuma to the output of VisualSFM for pmvs. Images will be taken from \<pmvs\>/visualize and cameras from \<pmvs\>/txt/ Additionally 3d points in \<pmvs\>/bundle.rd.out |
 | krt_file | -krt_file \<file\> | In this way camera information is read from a file as specified by Middlebury benchmark http://vision.middlebury.edu/mview/data/ |
-| p_folder | -p_folder \<folder\> | This parameter expects a folder with a list of textfiles containing the P matrix on 3 lines and the same filename as the images but with ".P." appended |
+| p_folder | -p_folder \<folder\> | This parameter expects a folder with a list of textfiles containing the P matrix on 3 lines and the same filename as the images but with ".P" appended |
 
 To specify an image list in case a pmvs folder is not specify a list of filename is needed with an image folder.
 For example:
