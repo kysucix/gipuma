@@ -60,6 +60,21 @@ For each camera gipuma need to compute the _noisy_ depthmap. The final fusion of
 
 ### DTU dataset
 http://roboimagedata.compute.dtu.dk/?page_id=24
+
+In case you did not download it, you can download the sample dataset:
+```bash
+./scripts/download-dtu.sh
+```
+Then to reconstruct image 1 using fast settings:
+```
+./scripts/dtu-fast.sh 1
+```
+or for the accurate version
+```
+./scripts/dtu-accurate.sh 1
+```
+In case you need to reconstruct other images just copy the corresponding folder inside ./data/dtu/SampleSet/MVS\ Data/Rectified/
+
 ### Strecha dataset
 ## Configuration
 
