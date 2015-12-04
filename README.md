@@ -44,22 +44,18 @@ Gipuma itself is only a matcher. It will compute a depthmap with respect to the 
 
 For each camera gipuma need to compute the _noisy_ depthmap. The final fusion of depthmap is obtained with [fusibile](https://github.com/kysucix/fusibile)
 
-## Faq
- TODO
 ## Examples
- TODO
-### Middlebury
+ ### Middlebury
  inside gipuma directory first download middlebury data
  ```bash
  ./scripts/download-middlebury.sh
  ./scripts/download-middlebury.sh
  ```
- Then run the model you prefer
+ Then run the model you prefer. For example for the dino sparse ring:
  ```bash
  ./scripts/dinoSparseRing.sh
  ```
- It's only missing the background removal (black pixel < 15 get rejected in the fusion), otherwise the result should match
- the one sent to middlebury benchmark (excl. Poisson reconstruction)
+ It will fuse the dephmaps without considering point projecting on the image with an intensity lower than 20 (on a scale 0-255). The result should match the  middlebury benchmark submission (excluding [Poisson reconstruction](http://www.cs.jhu.edu/~misha/Code/PoissonRecon/))
 
 
 ### DTU dataset
