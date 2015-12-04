@@ -61,7 +61,7 @@ For each camera gipuma need to compute the _noisy_ depthmap. The final fusion of
 ### DTU dataset
 http://roboimagedata.compute.dtu.dk/?page_id=24
 
-In case you did not download it, you can download the sample dataset:
+In case you did not download it, you can download the sample dataset (warning: 6GB of data)):
 ```bash
 ./scripts/download-dtu.sh
 ```
