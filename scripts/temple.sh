@@ -50,4 +50,4 @@ do
     fi
 done
 echo $warping -input_folder $output_dir -krt_file $p_folder -images_folder $inputdir --cam_scale=$scale --depth_min=$depth_min --depth_max=$depth_max --disp_thresh=$disp_thresh --normal_thresh=$normal_thresh --num_consistent=$num_consistent
-$warping -input_folder $output_dir -krt_file $p_folder -images_folder $inputdir --cam_scale=$scale --depth_min=$depth_min --depth_max=$depth_max --disp_thresh=$disp_thresh --normal_thresh=$normal_thresh --num_consistent=$num_consistent
+$warping -input_folder $output_dir -krt_file $p_folder -images_folder $inputdir --cam_scale=$scale --depth_min=$depth_min --depth_max=$depth_max --disp_thresh=$disp_thresh --normal_thresh=$normal_thresh --num_consistent=$num_consistent -remove_black_background
