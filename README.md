@@ -44,11 +44,8 @@ Gipuma itself is only a matcher. It will compute a depthmap with respect to the 
 
 For each camera gipuma need to compute the _noisy_ depthmap. The final fusion of depthmap is obtained with [fusibile](https://github.com/kysucix/fusibile)
 
-## Faq
- TODO
 ## Examples
- TODO
-### Middlebury
+ ### Middlebury
  inside gipuma directory first download middlebury data
  ```bash
  ./scripts/download-middlebury.sh
