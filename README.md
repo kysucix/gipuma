@@ -67,11 +67,11 @@ In case you did not download it, you can download the sample dataset (warning: 6
 ```
 Then to reconstruct image 1 using fast settings:
 ```
-./scripts/dtu-fast.sh 1
+./scripts/dtu_fast.sh 1
 ```
 or for the accurate version
 ```
-./scripts/dtu-accurate.sh 1
+./scripts/dtu_accurate.sh 1
 ```
 In case you need to reconstruct other images just copy the corresponding folder inside ./data/dtu/SampleSet/MVS\ Data/Rectified/
 
