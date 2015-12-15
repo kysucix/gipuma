@@ -12,13 +12,13 @@ S. Galliani, K. Lasinger and K. Schindler, [Massively Parallel Multiview Stereop
 
 **IMPORTANT**: If you use this software please cite the following in any resulting publication:
 ```
-@inproceedings{galliani15_iccv,
-    Title={Massively Parallel Multiview Stereopsis by Surface Normal Diffusion},
-    Author={Galliani, Silvano and Lasinger, Katrin and Schindler, Konrad},
-    Booktitle = {Proc. of the IEEE International Conference on Computer Vision (ICCV)},
-    Year = {2015},
-    Month = {December}
-}
+ @InProceedings{Galliani_2015_ICCV,
+author = {Galliani, Silvano and Lasinger, Katrin and Schindler, Konrad},
+title = {Massively Parallel Multiview Stereopsis by Surface Normal Diffusion},
+journal = {The IEEE International Conference on Computer Vision (ICCV)},
+month = {June},
+year = {2015}
+} 
 ```
 
 ## Requirements:
