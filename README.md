@@ -28,11 +28,11 @@ year = {2015}
  - [cmake](http://cmake.org)
  
 ## Tested Operating Systems
- - Ubuntu GNU/Linux 14.04
+ - Ubuntu GNU/Linux 14.04 (use their repository for cuda sdk and nvidia drivers)
  - Windows with Visual Studio 2012/2013 (it's working directly with cmake)
 
 ## How to compile it
-Just use cmake for both Windows and Linux.
+Use cmake for both Windows and Linux.
 For linux it gets as easy as:
 ```bash
 cmake .
@@ -42,7 +42,7 @@ make
 ## How does it work?
 Gipuma itself is only a matcher. It will compute a depthmap with respect to the specified reference camera.
 
-For each camera gipuma need to compute the _noisy_ depthmap. The final fusion of depthmap is obtained with [fusibile](https://github.com/kysucix/fusibile)
+For each camera gipuma computes the _noisy_ depthmap. The final fusion of depthmap is obtained with [fusibile](https://github.com/kysucix/fusibile)
 
 ## Examples
  ### Middlebury
@@ -110,3 +110,8 @@ For example:
 ### Optional Parameters
  The following parameters _can_ be tweaked at will but in our experience they do not affect the overall reconstruction
  TODO
+ 
+ ## Bugs
+ _There are no bugs, just features! :P_
+ 
+ Please use the github ticketing system. In this way other users might benefit from tips ans solutions from other users.
