@@ -1,10 +1,8 @@
 cmake_minimum_required (VERSION 2.8)
 project (gipuma)
 
-#find_package(Armadillo REQUIRED)
 find_package(CUDA 6.0 REQUIRED ) # For Cuda Managed Memory and c++11
 find_package(OpenCV REQUIRED )
-#FIND_PACKAGE(gflags REQUIRED )
 
 include_directories(${OpenCV_INCLUDE_DIRS})
 include_directories(.)
