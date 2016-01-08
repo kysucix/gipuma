@@ -12,13 +12,13 @@ S. Galliani, K. Lasinger and K. Schindler, [Massively Parallel Multiview Stereop
 
 **IMPORTANT**: If you use this software please cite the following in any resulting publication:
 ```
- @InProceedings{Galliani_2015_ICCV,
-author = {Galliani, Silvano and Lasinger, Katrin and Schindler, Konrad},
-title = {Massively Parallel Multiview Stereopsis by Surface Normal Diffusion},
-journal = {The IEEE International Conference on Computer Vision (ICCV)},
-month = {June},
-year = {2015}
-} 
+@InProceedings{Galliani_2015_ICCV,
+     author  = {Galliani, Silvano and Lasinger, Katrin and Schindler, Konrad},
+     title   = {Massively Parallel Multiview Stereopsis by Surface Normal Diffusion},
+     journal = {The IEEE International Conference on Computer Vision (ICCV)},
+     month   = {June},
+     year    = {2015}
+}
 ```
 
 ## Requirements:
@@ -26,7 +26,7 @@ year = {2015}
  - Nvidia video card with compute capability at least 3.0, see https://en.wikipedia.org/wiki/CUDA#Supported_GPUs
  - [Opencv](http://opencv.org) >= 2.4
  - [cmake](http://cmake.org)
- 
+
 ## Tested Operating Systems
  - Ubuntu GNU/Linux 14.04 (use their repository for cuda sdk and nvidia drivers)
  - Windows with Visual Studio 2012/2013 (it's working directly with cmake)
@@ -110,8 +110,8 @@ For example:
 ### Optional Parameters
  The following parameters _can_ be tweaked at will but in our experience they do not affect the overall reconstruction
  TODO
- 
- ## Bugs
+
+## Bugs
  _There are no bugs, just features! :P_
- 
+
  Please use the github ticketing system. In this way other users might benefit from tips ans solutions from other users.
