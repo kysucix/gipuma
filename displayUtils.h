@@ -7,7 +7,7 @@
 #include <fstream>
 
 #if (CV_MAJOR_VERSION ==2)
-#include <opencv2/contrib.hpp> // needed for applyColorMap!
+#include <opencv2/contrib/contrib.hpp> // needed for applyColorMap!
 #endif
 
 
