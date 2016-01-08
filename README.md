@@ -44,6 +44,10 @@ Gipuma itself is only a matcher. It will compute a depthmap with respect to the 
 
 For each camera gipuma computes the _noisy_ depthmap. The final fusion of depthmap is obtained with [fusibile](https://github.com/kysucix/fusibile)
 
+Use a point cloud visualizer to open the resulting ply file.
+[Meshlab](http://meshlab.sourceforge.net/) is probably the best visualizer
+because it allows to render points cloud with normals.
+
 ## Examples
  ### Middlebury
  inside gipuma directory first download middlebury data
@@ -76,6 +80,7 @@ or for the accurate version
 In case you need to reconstruct other images just copy the corresponding folder inside ./data/dtu/SampleSet/MVS\ Data/Rectified/
 
 ### Strecha dataset
+TODO
 ## Configuration
 
 ### Necessary Parameters
