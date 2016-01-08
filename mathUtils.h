@@ -28,5 +28,5 @@ static float getAngle ( Vec3f v1, Vec3f v2 ) {
 	//if ( acosf ( v1.dot ( v2 ) ) != acosf ( v1.dot ( v2 ) ) )
 		//cout << acosf ( v1.dot ( v2 ) ) << " / " << v1.dot ( v2 )<< " / " << v1<< " / " << v2 << endl;
 	return angle;
-};
+}
 

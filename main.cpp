@@ -47,7 +47,7 @@ static void parse_bundler_3d_points ( const char *filename, std::vector<Vec3f> &
         myfile.getline(line,512); // skip comment
     myfile.getline(line,512); //     <num_cameras> <num_points>   [two integers]
     sscanf ( line, "%u %u", &num_cameras, &num_points);
-    for (auto i=0; i< num_cameras; i++)
+    for (size_t i=0; i< num_cameras; i++)
     {
         myfile.getline(line,512); //         <f> <k1> <k2>   [the focal length, followed by two radial distortion coeffs]
 
@@ -66,7 +66,7 @@ static void parse_bundler_3d_points ( const char *filename, std::vector<Vec3f> &
      *    <view list>     [a list of views the point is visible in]
      */
     point_list.resize (num_points);
-    for (auto i=0; i< num_points; i++)
+    for (size_t i=0; i< num_points; i++)
     {
         Vec3f X;
         myfile.getline(line, 512); //    <position>      [a 3-vector describing the 3D position of the point]
@@ -91,7 +91,7 @@ static void from_bundler_get_range (CameraParameters &cameraParams,
     float min_depth = 9999;
     float max_depth = 0;
     // For each camera
-    for ( int i = 1; i < cameras.size (); i++ ) {
+    for ( size_t i = 1; i < cameras.size (); i++ ) {
         // For each point
         for (auto X : point_list)
         {
@@ -432,7 +432,7 @@ static void selectViews (CameraParameters &cameraParams, int imgWidth, int imgHe
 
     cameraParams.viewSelectionSubset.clear ();
 
-    Vec3f viewVectorRef = getViewVector ( ref, x, y, cameraParams.rectified );
+    Vec3f viewVectorRef = getViewVector ( ref, x, y);
 
     // TODO hardcoded value makes it a parameter
     float minimum_angle_degree = algParams.min_angle;
@@ -451,7 +451,7 @@ static void selectViews (CameraParameters &cameraParams, int imgWidth, int imgHe
             //continue;
         //}
 
-        Vec3f vec = getViewVector ( cameras[i], x, y, cameraParams.rectified );
+        Vec3f vec = getViewVector ( cameras[i], x, y);
 
         float baseline = norm (cameras[0].C, cameras[i].C);
         float angle = getAngle ( viewVectorRef, vec );
@@ -501,7 +501,7 @@ static void delTexture (int num, cudaTextureObject_t texs[], cudaArray *cuArray[
 
 static void addImageToTextureUint (vector<Mat_<uint8_t> > &imgs, cudaTextureObject_t texs[], cudaArray *cuArray[])
 {
-    for (int i=0; i<imgs.size(); i++)
+    for (size_t i=0; i<imgs.size(); i++)
     {
         int rows = imgs[i].rows;
         int cols = imgs[i].cols;
@@ -544,7 +544,7 @@ static void addImageToTextureUint (vector<Mat_<uint8_t> > &imgs, cudaTextureObje
         texDesc.normalizedCoords = 0;
 
         // Create texture object
-        cudaTextureObject_t &texObj = texs[i];
+        //cudaTextureObject_t &texObj = texs[i];
         checkCudaErrors(cudaCreateTextureObject(&(texs[i]), &resDesc, &texDesc, NULL));
         //texs[i] = texObj;
     }
@@ -552,7 +552,7 @@ static void addImageToTextureUint (vector<Mat_<uint8_t> > &imgs, cudaTextureObje
 }
 static void addImageToTextureFloatColor (vector<Mat > &imgs, cudaTextureObject_t texs[], cudaArray *cuArray[])
 {
-    for (int i=0; i<imgs.size(); i++)
+    for (size_t i=0; i<imgs.size(); i++)
     {
         int rows = imgs[i].rows;
         int cols = imgs[i].cols;
@@ -560,13 +560,13 @@ static void addImageToTextureFloatColor (vector<Mat > &imgs, cudaTextureObject_t
         cudaChannelFormatDesc channelDesc = cudaCreateChannelDesc<float4>();
 
         // Allocate array with correct size and number of channels
-        cudaArray *cuArray;
-        checkCudaErrors(cudaMallocArray(&cuArray,
+        //cudaArray *cuArray;
+        checkCudaErrors(cudaMallocArray(&cuArray[i],
                                         &channelDesc,
                                         cols,
                                         rows));
 
-        checkCudaErrors (cudaMemcpy2DToArray (cuArray,
+        checkCudaErrors (cudaMemcpy2DToArray (cuArray[i],
                                               0,
                                               0,
                                               imgs[i].ptr<float>(),
@@ -579,7 +579,7 @@ static void addImageToTextureFloatColor (vector<Mat > &imgs, cudaTextureObject_t
         struct cudaResourceDesc resDesc;
         memset(&resDesc, 0, sizeof(resDesc));
         resDesc.resType         = cudaResourceTypeArray;
-        resDesc.res.array.array = cuArray;
+        resDesc.res.array.array = cuArray[i];
 
         // Specify texture object parameters
         struct cudaTextureDesc texDesc;
@@ -591,7 +591,7 @@ static void addImageToTextureFloatColor (vector<Mat > &imgs, cudaTextureObject_t
         texDesc.normalizedCoords = 0;
 
         // Create texture object
-        cudaTextureObject_t &texObj = texs[i];
+        //cudaTextureObject_t &texObj = texs[i];
         checkCudaErrors(cudaCreateTextureObject(&(texs[i]), &resDesc, &texDesc, NULL));
     }
     return;
@@ -599,7 +599,7 @@ static void addImageToTextureFloatColor (vector<Mat > &imgs, cudaTextureObject_t
 
 static void addImageToTextureFloatGray (vector<Mat > &imgs, cudaTextureObject_t texs[], cudaArray *cuArray[])
 {
-    for (int i=0; i<imgs.size(); i++)
+    for (size_t i=0; i<imgs.size(); i++)
     {
         int rows = imgs[i].rows;
         int cols = imgs[i].cols;
@@ -641,7 +641,7 @@ static void addImageToTextureFloatGray (vector<Mat > &imgs, cudaTextureObject_t 
         texDesc.normalizedCoords = 0;
 
         // Create texture object
-        cudaTextureObject_t &texObj = texs[i];
+        //cudaTextureObject_t &texObj = texs[i];
         checkCudaErrors(cudaCreateTextureObject(&(texs[i]), &resDesc, &texDesc, NULL));
         //texs[i] = texObj;
     }
@@ -691,9 +691,9 @@ static int runGipuma ( InputFiles &inputFiles,
     vector<Mat_<Vec3b> > img_color(numImages); // imgLeft_color, imgRight_color;
     vector<Mat_<uint8_t> > img_grayscale(numImages);
     for ( size_t i = 0; i < numImages; i++ ) {
-        img_grayscale[i] = imread ( ( " ", inputFiles.images_folder + inputFiles.img_filenames[i] ), IMREAD_GRAYSCALE );
+        img_grayscale[i] = imread ( ( inputFiles.images_folder + inputFiles.img_filenames[i] ), IMREAD_GRAYSCALE );
         if ( algParams.color_processing ) {
-            img_color[i] = imread ( ( " ", inputFiles.images_folder + inputFiles.img_filenames[i] ), IMREAD_COLOR );
+            img_color[i] = imread ( ( inputFiles.images_folder + inputFiles.img_filenames[i] ), IMREAD_COLOR );
         }
 
         if ( img_grayscale[i].rows == 0 ) {
@@ -782,7 +782,7 @@ static int runGipuma ( InputFiles &inputFiles,
     //cudaMemGetInfo( &avail, &total );
     //used = total - avail;
     //printf("Device memory used after GlobalState allocation: %fMB\n", used/1000000.0f);
-    CameraParameters cameraParams = getCameraParameters ( *(gs->cameras), inputFiles, algParams.depthMin, algParams.depthMax, algParams.cam_scale);
+    CameraParameters cameraParams = getCameraParameters ( *(gs->cameras), inputFiles, algParams.cam_scale);
 
     writeParametersToFile ( resultsFile, inputFiles, algParams, gtParameters, numPixels );
 
@@ -887,7 +887,7 @@ static int runGipuma ( InputFiles &inputFiles,
     vector<Mat > img_color_float(numImages);
     vector<Mat > img_color_float_alpha(numImages);
     vector<Mat_<uint16_t> > img_grayscale_uint(numImages);
-    for (int i = 0; i<numImages; i++)
+    for (size_t i = 0; i<numImages; i++)
     {
         img_grayscale[i].convertTo(img_grayscale_float[i], CV_32FC1); // or CV_32F works (too)
         img_grayscale[i].convertTo(img_grayscale_uint[i], CV_16UC1); // or CV_32F works (too)
@@ -906,7 +906,7 @@ static int runGipuma ( InputFiles &inputFiles,
             merge (rgbChannels, img_color_float_alpha[i]);
         }
     }
-    int64_t t = getTickCount () - t;
+    int64_t t = getTickCount ();
 
     cudaMemGetInfo( &avail, &total );
     used = total - avail;
@@ -967,9 +967,9 @@ static int runGipuma ( InputFiles &inputFiles,
 
     Mat_<float> distImg;
 
-    for ( size_t i = 0; i < algParams.num_img_processed; i++ ) {
+    for ( size_t i = 0; i < (size_t) algParams.num_img_processed; i++ ) {
         // store 3D coordinates to file
-        CameraParameters camParamsNotTransformed = getCameraParameters ( *(gs->cameras), inputFiles, algParams.depthMin, algParams.depthMax, algParams.cam_scale, false );
+        CameraParameters camParamsNotTransformed = getCameraParameters ( *(gs->cameras), inputFiles, algParams.cam_scale, false );
         char plyFile[256];
         sprintf ( plyFile, "%s/3d_model%lu.ply", outputFolder, i );
 
@@ -1052,7 +1052,7 @@ static int runGipuma ( InputFiles &inputFiles,
         computeError ( groundTruthDisp, groundTruthDispNocc, disp_median, errorImg, errorImgNocc, errorImgNocc2, nonerrorImg, med_error, med_error2, errorNocc, errorValid, errorValidAll, gtParameters, valid, errorImgValid );
 
         //error before post processing
-        results.valid_pixels_gt = computeError ( groundTruthDisp, groundTruthDispNocc, disp0/*disp_median/*dispDepth*/, errorImg, errorImgNocc, errorImgNocc2, nonerrorImg, error, error2, errorNocc, errorValid, errorValidAll, gtParameters, valid, errorImgValid );
+        results.valid_pixels_gt = computeError ( groundTruthDisp, groundTruthDispNocc, disp0, errorImg, errorImgNocc, errorImgNocc2, nonerrorImg, error, error2, errorNocc, errorValid, errorValidAll, gtParameters, valid, errorImgValid );
 
         float normalError = 0.0f;
         float normalError2 = 0.0f;

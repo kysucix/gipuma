@@ -50,12 +50,12 @@ because it allows to render points cloud with normals.
 
 ## Examples
  ### Middlebury
- inside gipuma directory first download middlebury data
+ inside gipuma directory first download middlebury data:
  ```bash
  ./scripts/download-middlebury.sh
- ./scripts/download-middlebury.sh
  ```
- Then run the model you prefer. For example for the dino sparse ring:
+ Then run the model you prefer (see the list of available scripts inside the script folder).
+ For example for the dino sparse ring:
  ```bash
  ./scripts/dinoSparseRing.sh
  ```

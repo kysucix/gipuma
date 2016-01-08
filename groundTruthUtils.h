@@ -92,7 +92,7 @@ float computeError(const Mat_<float>& gtDisp, const Mat_<uint8_t>& occImg, Mat_<
 	errorValidAll = (errorValid + (numGtPixels-numValidPixels)) / (float)numGtPixels;
 	errorValid = errorValid / (float)numValidPixels;
 	return (float)numValidPixels/(float)numGtPixels;
-};
+}
 
 static float computeNormalError(const Mat_<Vec3f> &normals, const Mat_<Vec3f> &gtNormals, float gtNormTol, float gtNormTol2, Mat_<float> &errorMap, float &error2){
 	int numGtPixels = 0;
@@ -132,8 +132,8 @@ static float computeNormalError(const Mat_<Vec3f> &normals, const Mat_<Vec3f> &g
 	}
 	error2 = (float)error2_count/ (float) numGtPixels;
 	return (float)error / (float) numGtPixels;
-};
+}
 
 static void getNoccGTimg(const Mat_<float> &groundTruthDisp, const Mat_<uint8_t> &occlusionImg, Mat_<float> &groundTruthDispNocc){
 	bitwise_and(groundTruthDisp,groundTruthDisp,groundTruthDispNocc,occlusionImg);
-};
+}

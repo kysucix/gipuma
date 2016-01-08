@@ -65,12 +65,7 @@ inline Vec3f get3Dpoint ( Camera &cam, int x, int y, float depth ){
 }
 
 // get the viewing ray for a pixel position of the camera
-static inline Vec3f getViewVector ( Camera &cam, int x, int y, bool rectified ) {
-
-#ifdef RECTIFIED
-    if ( rectified )
-        return Vec3f ( 0.0f,0.0f,1.0f );
-#endif
+static inline Vec3f getViewVector ( Camera &cam, int x, int y) {
 
     //get some point on the line (the other point on the line is the camera center)
     Vec3f ptX = get3Dpoint ( cam,x,y,1.0f );
@@ -176,7 +171,11 @@ void copyOpencvMatToFloatArray ( Mat_<float> &m, float **a)
  *         scaleFactor - if image was rescaled we need to adapt calibration matrix K accordingly
  * Output: camera parameters
  */
-CameraParameters getCameraParameters ( CameraParameters_cu &cpc, InputFiles inputFiles, float depthMin, float depthMax, float scaleFactor = 1.0f, bool transformP = true ) {
+CameraParameters getCameraParameters ( CameraParameters_cu &cpc,
+                                       InputFiles inputFiles,
+                                       float scaleFactor = 1.0f,
+                                       bool transformP = true )
+{
 
     CameraParameters params;
     size_t numCameras = 2;
@@ -249,7 +248,7 @@ CameraParameters getCameraParameters ( CameraParameters_cu &cpc, InputFiles inpu
     vector<Mat_<float> > C ( numCameras );
     vector<Mat_<float> > t ( numCameras );
 
-    for ( int i = 0; i < numCameras; i++ ) {
+    for ( size_t i = 0; i < numCameras; i++ ) {
         decomposeProjectionMatrix ( params.cameras[i].P,K[i],R[i],T[i] );
 
         //cout << "K: " << K[i] << endl;
@@ -282,13 +281,10 @@ CameraParameters getCameraParameters ( CameraParameters_cu &cpc, InputFiles inpu
     // get focal length from calibration matrix
     params.f = params.K ( 0,0 );
 
-    for ( int i = 0; i < numCameras; i++ ) {
+    for ( size_t i = 0; i < numCameras; i++ ) {
         params.cameras[i].K = scaleK(K[i],scaleFactor);
         params.cameras[i].K_inv = params.cameras[i].K.inv ( );
         //params.cameras[i].f = params.cameras[i].K(0,0);
-
-        //params.cameras[i].depthMin = depthMin;
-        //params.cameras[i].depthMax = depthMax;
 
         if ( !inputFiles.bounding_folder.empty () ) {
             Vec3f ptBL, ptTR;
@@ -320,8 +316,6 @@ CameraParameters getCameraParameters ( CameraParameters_cu &cpc, InputFiles inpu
         cpc.cameras[i].f = params.K(0,0);
         cpc.cameras[i].fx = params.K(0,0);
         cpc.cameras[i].fy = params.K(1,1);
-        //cpc.cameras[i].depthMin = params.cameras[i].depthMin;
-        //cpc.cameras[i].depthMax = params.cameras[i].depthMax;
         cpc.cameras[i].baseline = params.cameras[i].baseline;
         cpc.cameras[i].reference = params.cameras[i].reference;
 

@@ -40,8 +40,8 @@ struct InputFiles {
     string calib_filename; // calibration file containing camera matrices (P) (as provided e.g. by Kitti)
     string images_folder; // path to camera input images
     string p_folder; // path to camera projection matrix P (Strecha)
-    string krt_file; // path to camera matrixes in middlebury format
     string camera_folder; // path to camera calibration matrix K (Strecha)
+    string krt_file; // path to camera matrixes in middlebury format
     string bounding_folder; //path to bounding volume (Strecha)
     string seed_file; // path to bounding volume (Strecha)
     string pmvs_folder; // path to pmvs folder

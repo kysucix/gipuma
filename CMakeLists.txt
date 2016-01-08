@@ -12,8 +12,11 @@ set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS};-O3 --use_fast_math --ptxas-options=-v -s
 
 if(CMAKE_COMPILER_IS_GNUCXX)
     add_definitions(-std=c++11)
-    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -ffast-math -march=native") # extend release-profile with fast-math
-    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall") # extend debug-profile with -Wall
+    add_definitions(-Wall)
+    add_definitions(-Wextra)
+    add_definitions(-pedantic)
+    add_definitions(-Wno-unused-function)
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -ffast-math -march=native") # extend release-profile with fast-math
 endif()
 
 find_package(OpenMP)

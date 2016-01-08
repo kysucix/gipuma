@@ -22,7 +22,7 @@ static void getProjectionMatrix(char* line, Mat_<float> &P){
 
         idx++;
     }
-};
+}
 
 static int read3Dpoint(char* line, Vec3f &pt){
     const char* p;
@@ -51,7 +51,7 @@ static void readCalibFileKitti(const string calib_filename, Mat_<float> &P1, Mat
     myfile.getline(line,512);
     getProjectionMatrix(line,P2);
     myfile.close();
-};
+}
 
 static void readBoundingVolume(const string filename, Vec3f &ptBL, Vec3f & ptTR){
     ifstream myfile;
@@ -65,7 +65,7 @@ static void readBoundingVolume(const string filename, Vec3f &ptBL, Vec3f & ptTR)
     read3Dpoint(line,ptTR);
 
     myfile.close();
-};
+}
 
 
 static void readCameraFileStrecha(const string camera_filename, float &focalLength){
@@ -136,7 +136,7 @@ static void readKRtFileMiddlebury(const string filename, vector<Camera> cameras,
         /*cout << "t is " << vt << endl;*/
         //cout << "Filename is " << tmp << endl;
         //cout << "image Filename is " << inputFiles.img_filenames[i] << endl;
-        for( int j = 0; j < inputFiles.img_filenames.size(); j++) {
+        for( size_t j = 0; j < inputFiles.img_filenames.size(); j++) {
             if( tmp == inputFiles.img_filenames[j]) {
                 truei=j;
                 break;
@@ -171,7 +171,6 @@ static void readCalibFileDaisy(const string calib_filename, Mat_<float> &P){
             getProjectionMatrix(line,P);
     }
 
-
     myfile.close();
 }
 
@@ -179,7 +178,7 @@ static void writeImageToFile(const char* outputFolder,const char* name,const Mat
     char outputPath[256];
     sprintf(outputPath, "%s/%s.png", outputFolder,name);
     imwrite(outputPath,img);
-};
+}
 
 static void writeParametersToFile(char* resultsFile, InputFiles inputFiles, AlgorithmParameters &algParameters, GTcheckParameters &gtParameters, uint32_t numPixels){
 
@@ -188,7 +187,7 @@ static void writeParametersToFile(char* resultsFile, InputFiles inputFiles, Algo
     myfile << "Number of images: " << inputFiles.img_filenames.size() << endl;
     myfile << "Image folder: " << inputFiles.images_folder << endl;
     myfile << "Images: ";
-    for(int i=0; i < inputFiles.img_filenames.size(); i++)
+    for(size_t i=0; i < inputFiles.img_filenames.size(); i++)
         myfile << inputFiles.img_filenames[i] << ", " ;
     myfile << endl;
     if(numPixels != 0)
@@ -243,7 +242,7 @@ static void writeParametersToFile(char* resultsFile, InputFiles inputFiles, Algo
         myfile << "no" << endl;
     myfile << "  GT disparity tolerance: " << gtParameters.dispTolGT << "\n" << endl;
     myfile.close();
-};
+}
 // read ground truth depth map file (dmb) (provided by Tola et al. "DAISY: A Fast Local Descriptor for Dense Matching" http://cvlab.epfl.ch/software/daisy)
 static int readDmbNormal (const char *filename, Mat_<Vec3f> &img)
 {
@@ -473,4 +472,4 @@ static int readPfm( const char *filename,
     fclose(inimage);
     return 0;
 
-};
+}

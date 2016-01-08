@@ -28,7 +28,7 @@ Mat correctGamma( Mat& img, double gamma ) {
  LUT( img, lut_matrix, result );
 
  return result;
-};
+}
 
 
 static void getDisparityForDisplay(const Mat_<float> &disp, Mat &dispGray, Mat &dispColor, float numDisparities, float minDisp = 0.0f){
@@ -45,7 +45,7 @@ static void getDisparityForDisplay(const Mat_<float> &disp, Mat &dispGray, Mat &
 				dispColor.at<Vec3b>(y,x) = Vec3b(0,0,0);
 		}
 	}
-};
+}
 
 static void convertDisparityDepthImage(const Mat_<float> &dispL, Mat_<float> &d, float f, float baseline){
 	d = Mat::zeros(dispL.rows, dispL.cols, CV_32F);
@@ -54,7 +54,7 @@ static void convertDisparityDepthImage(const Mat_<float> &dispL, Mat_<float> &d,
 			d(y,x) = disparityDepthConversion(f,baseline,dispL(y,x));
 		}
 	}
-};
+}
 
 static string getColorString(uint8_t color){
 	stringstream ss;
@@ -242,4 +242,4 @@ static void getNormalsForDisplay(const Mat &normals, Mat &normals_display, int r
 	else
 		normals.convertTo(normals_display,CV_16U,32767,32767);
 	cvtColor(normals_display,normals_display,COLOR_RGB2BGR);
-};
+}
