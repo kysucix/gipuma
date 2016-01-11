@@ -1897,21 +1897,21 @@ void gipuma(GlobalState &gs)
     block_size_initrand.x=16;
     block_size_initrand.y=16;
 
-    printf("Launching kernel with grid of size %d %d and block of size %d %d and shared size %d %d\nBlock %d %d and radius %d %d and tile %d %d\n",
-           grid_size.x,
-           grid_size.y,
-           block_size.x,
-           block_size.y,
-           SHARED_SIZE_W_host,
-           SHARED_SIZE_H,
-           BLOCK_W,
-           BLOCK_H,
-           WIN_RADIUS_W,
-           WIN_RADIUS_H,
-           TILE_W,
-           TILE_H
-          );
-    printf("Grid size initrand is grid: %d-%d block: %d-%d\n", grid_size_initrand.x, grid_size_initrand.y, block_size_initrand.x, block_size_initrand.y);
+    //printf("Launching kernel with grid of size %d %d and block of size %d %d and shared size %d %d\nBlock %d %d and radius %d %d and tile %d %d\n",
+           //grid_size.x,
+           //grid_size.y,
+           //block_size.x,
+           //block_size.y,
+           //SHARED_SIZE_W_host,
+           //SHARED_SIZE_H,
+           //BLOCK_W,
+           //BLOCK_H,
+           //WIN_RADIUS_W,
+           //WIN_RADIUS_H,
+           //TILE_W,
+           //TILE_H
+          //);
+    //printf("Grid size initrand is grid: %d-%d block: %d-%d\n", grid_size_initrand.x, grid_size_initrand.y, block_size_initrand.x, block_size_initrand.y);
 
     size_t avail;
     size_t total;
@@ -1919,19 +1919,20 @@ void gipuma(GlobalState &gs)
     size_t used = total - avail;
     int maxiter=gs.params->iterations;
     printf("Device memory used: %fMB\n", used/1000000.0f);
-    printf("Number of iterations is %d\n", maxiter);
     printf("Blocksize is %dx%d\n", gs.params->box_hsize,gs.params->box_vsize);
 
     //int shared_memory_size = sizeof(float)  * SHARED_SIZE ;
-    printf("Computing depth\n");
+    //printf("Computing depth\n");
+    printf("Number of iterations is %d\n", maxiter);
     //gipuma_init_cu<T><<< (rows + BLOCK_H-1)/BLOCK_H, BLOCK_H>>>(gs);
     //gipuma_init_random<<< grid_size_initrand, block_size_initrand>>>(gs);
     gipuma_init_cu2<T><<< grid_size_initrand, block_size_initrand>>>(gs);
     //gipuma_initial_cost<T><<< grid_size_initrand, block_size_initrand>>>(gs);
     cudaEventRecord(start);
     //for (int it =0;it<gs.params.iterations; it++) {
+    printf("Iteration ");
     for (int it =0;it<maxiter; it++) {
-        printf("Iteration %d\n", it+1);
+        printf("%d ", it+1);
 #ifdef SMALLKERNEL
         //spatial propagation of 4 closest neighbors (1px up/down/left/right)
         gipuma_black_spatialPropClose_cu<T><<< grid_size, block_size, shared_size_host * sizeof(T)>>>(gs, it);
@@ -1961,6 +1962,7 @@ void gipuma(GlobalState &gs)
         gipuma_red_cu<T><<< grid_size, block_size, shared_size_host * sizeof(T)>>>(gs, it);
 #endif
     }
+    printf("\n");
     //printf("Computing final disparity\n");
     gipuma_compute_disp<<< grid_size_initrand, block_size_initrand>>>(gs);
     cudaDeviceSynchronize();
@@ -1970,7 +1972,7 @@ void gipuma(GlobalState &gs)
 
     float milliseconds = 0;
     cudaEventElapsedTime(&milliseconds, start, stop);
-    printf("\t\tELAPSED %f seconds\n", milliseconds/1000.f);
+    printf("\t\tTotal time needed for computation: %f seconds\n", milliseconds/1000.f);
 
     cudaError_t err = cudaGetLastError();
     if (err != cudaSuccess)

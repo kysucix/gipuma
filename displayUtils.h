@@ -76,7 +76,7 @@ static string getColorString(Vec3i color){
 }
 template <typename ImgType>
 static void storePlyFileBinary(char* plyFilePath, const Mat_<float> &depthImg, const Mat_<Vec3f> &normals, const Mat_<ImgType> img, Camera cam, Mat_<float> &distImg){
-	cout << "store 3D points to ply file " << plyFilePath << endl;
+	cout << "Saving output depthmap in " << plyFilePath << endl;
 
     FILE *outputPly;
     outputPly=fopen(plyFilePath,"wb");

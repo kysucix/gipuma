@@ -73,12 +73,10 @@ static void parse_bundler_3d_points ( const char *filename, std::vector<Vec3f> &
         sscanf ( line, "%f %f %f", &X[0], &X[1], &X[2]);
         myfile.getline(line, 512); //    <color>         [a 3-vector describing the RGB color of the point]
         myfile.getline(line, 512); //    <view list>     [a list of views the point is visible in]
-        if (i<10)
-            printf("3d point is %f %f %f\n", X[0], X[1], X[2]);
+        //if (i<10)
+            //printf("3d point is %f %f %f\n", X[0], X[1], X[2]);
         point_list[i] = X;
     }
-
-
 }
 
 static void from_bundler_get_range (CameraParameters &cameraParams,
@@ -401,9 +399,9 @@ static int getParametersFromCommandLine ( int argc,
     }
     //cout << "Seed file is " << inputFiles.seed_file  << endl;
     //cout << "Min angle is " << algParams.min_angle  << endl;
-    cout << "Pmvs path is " << inputFiles.pmvs_folder  << endl;
     if (inputFiles.pmvs_folder.size()>0)
     {
+        cout << "Using pmvs information inside directory " << inputFiles.pmvs_folder  << endl;
         inputFiles.images_folder = inputFiles.pmvs_folder + "/visualize/";
 
         inputFiles.img_filenames.clear();
@@ -412,7 +410,7 @@ static int getParametersFromCommandLine ( int argc,
 
         inputFiles.p_folder = inputFiles.pmvs_folder + "/txt/";
 
-        cout << "Camera idx " << camera_idx << endl;
+        cout << "Using image " << inputFiles.img_filenames[camera_idx] << " as reference camera" << endl;
         std::swap( inputFiles.img_filenames[0], inputFiles.img_filenames[camera_idx]);
     }
     cout << "Input files are: ";
@@ -444,7 +442,7 @@ static void selectViews (CameraParameters &cameraParams, int imgWidth, int imgHe
     float min_depth = 9999;
     float max_depth = 0;
     if ( algParams.viewSelection )
-        printf("Accepted intersection angle of central rays is %f to %f degrees\n", minimum_angle_degree, maximum_angle_degree);
+        printf("Accepting intersection angle of central rays from %f to %f degrees, use --min_angle=<angle> and --max_angle=<angle> to modify them\n", minimum_angle_degree, maximum_angle_degree);
     for ( size_t i = 1; i < cameras.size (); i++ ) {
         //if ( !algParams.viewSelection ) { //select all views, dont perform selection
             //cameraParams.viewSelectionSubset.push_back ( i );
@@ -460,7 +458,7 @@ static void selectViews (CameraParameters &cameraParams, int imgWidth, int imgHe
         {
             if ( algParams.viewSelection ) {
                 cameraParams.viewSelectionSubset.push_back ( i );
-                printf("Accepting camera %ld with angle\t %f degree (%f radians) and baseline %f\n", i, angle*180.0f/M_PI, angle, baseline);
+                printf("\taccepting camera %ld with angle\t %f degree (%f radians) and baseline %f\n", i, angle*180.0f/M_PI, angle, baseline);
             }
             float min_range = (baseline/2.0f) / sin(maximum_angle_radians/2.0f);
             float max_range = (baseline/2.0f) / sin(minimum_angle_radians/2.0f);
@@ -822,20 +820,21 @@ static int runGipuma ( InputFiles &inputFiles,
 
     selectViews ( cameraParams, cols, rows, algParams);
 
-
     if (inputFiles.pmvs_folder.size()>0) {
+        cout << "Using bundler file " << inputFiles.pmvs_folder + "/bundle.rd.out" << " to obtain depth range" << endl;
         from_bundler_get_range (cameraParams, algParams, (inputFiles.pmvs_folder + "/bundle.rd.out").c_str());
     }
 
 
-    cout << "Range of Minimum/Maximum depth is: " << algParams.depthMin << " " << algParams.depthMax << endl;
+    //cout << "Range of Minimum/Maximum depth is: " << algParams.depthMin << " " << algParams.depthMax << endl;
     int numSelViews = cameraParams.viewSelectionSubset.size ();
 
-    cout << "Selected views: " << numSelViews << endl;
+    cout << "Total number of images used: " << numSelViews << endl;
     ofstream myfile;
     myfile.open ( resultsFile, ios::out | ios::app );
     myfile << "\nNumber of selected views: " << numSelViews << endl;
     myfile << "Selected views: ";
+    cout << "Selected views: ";
     for ( int i = 0; i < numSelViews; i++ ) {
         myfile << cameraParams.viewSelectionSubset[i] << ", ";
         cout << cameraParams.viewSelectionSubset[i] << ", ";
@@ -860,7 +859,7 @@ static int runGipuma ( InputFiles &inputFiles,
         double minVal, maxVal;
         minMaxLoc ( disp[i], &minVal, &maxVal );
     }
-    cout << "Range of Minimum/Maximum depth is: " << algParams.min_disparity << " " << algParams.max_disparity << endl;
+    cout << "Range of Minimum/Maximum depth is: " << algParams.min_disparity << " " << algParams.max_disparity << ", change it with --depth_min=<value> and  --depth_max=<value>" <<endl;
 
     // run gpu run
     // Init parameters
@@ -910,7 +909,7 @@ static int runGipuma ( InputFiles &inputFiles,
 
     cudaMemGetInfo( &avail, &total );
     used = total - avail;
-    printf("Device memory used: %fMB\n", used/1000000.0f);
+    //printf("Device memory used: %fMB\n", used/1000000.0f);
     // Copy images to texture memory
     //addImageToTextureUint (img_grayscale, gs->imgs);
     if (algParams.color_processing)
@@ -920,7 +919,7 @@ static int runGipuma ( InputFiles &inputFiles,
 
     cudaMemGetInfo( &avail, &total );
     used = total - avail;
-    printf("Device memory used: %fMB\n", used/1000000.0f);
+    //printf("Device memory used: %fMB\n", used/1000000.0f);
     runcuda(*gs);
     Mat_<Vec3f> norm0 = Mat::zeros ( img_grayscale[0].rows, img_grayscale[0].cols, CV_32FC3 );
     Mat_<float> cudadisp = Mat::zeros ( img_grayscale[0].rows, img_grayscale[0].cols, CV_32FC1 );
@@ -1018,7 +1017,7 @@ static int runGipuma ( InputFiles &inputFiles,
             disp_nocc_col.release ();
     }
 
-    cout << "before time output" << endl;
+    //cout << "before time output" << endl;
     t = getTickCount () - t;
     double rt = ( double ) t / getTickFrequency ();
 
@@ -1032,7 +1031,7 @@ static int runGipuma ( InputFiles &inputFiles,
     myfile << "\nValid pixels: " << results.valid_pixels << endl;
     myfile.close ();
 
-    cout << "Total runtime: " << rt << "sec" << endl;
+    cout << "Total runtime including disk i/o: " << rt << "sec" << endl;
 
     //ground truth comparison
     if ( gtParameters.gtCheck ) {
