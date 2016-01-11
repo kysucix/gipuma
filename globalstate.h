@@ -33,12 +33,12 @@ public:
     //cudaTextureObject_t gradx [MAX_IMAGES];
     //cudaTextureObject_t grady [MAX_IMAGES];
     GlobalState() {
-        printf("GlobalState constructor\n");
+        //printf("GlobalState constructor\n");
         cameras = new CameraParameters_cu;
         lines = new LineState;
     }
     ~GlobalState() {
-        printf("GlobalState destructor\n");
+        //printf("GlobalState destructor\n");
         delete cameras;
         delete lines;
     }
