@@ -4,6 +4,8 @@ Source code for the paper:
 
 _S. Galliani, K. Lasinger and K. Schindler_, [**Massively Parallel Multiview Stereopsis by Surface Normal Diffusion**](http://www.prs.igp.ethz.ch/content/dam/ethz/special-interest/baug/igp/photogrammetry-remote-sensing-dam/documents/pdf/galliani-lasinger-iccv15.pdf) [(**supplementary material**)](http://www.prs.igp.ethz.ch/content/dam/ethz/special-interest/baug/igp/photogrammetry-remote-sensing-dam/documents/pdf/galliani-lasinger-supplementary-iccv15.pdf), [ICCV 2015](http://pamitc.org/iccv15/)
 
+## Documentation and Install
+Refer to the [wiki](https://github.com/kysucix/gipuma/wiki) for detailed documentation and examples.
 
 ## Authors
 - [Silvano Galliani](mailto:silvano.galliani@geod.baug.ethz.ch)
@@ -20,5 +22,3 @@ _S. Galliani, K. Lasinger and K. Schindler_, [**Massively Parallel Multiview Ste
      year    = {2015}
 }
 ```
-
-Please refer to the [wiki](https://github.com/kysucix/gipuma/wiki) for detailed documentation and examples.
