@@ -1,7 +1,7 @@
 #!
 prog="./gipuma"
 warping="../fusibile/fusibile"
-inputdir="data/dino"
+inputdir="data/dino/"
 batch_name="dino"
 output_dir_basename="results/$batch_name"
 p_folder="data/dino/dino_par.txt"
