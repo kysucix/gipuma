@@ -458,7 +458,7 @@ static void selectViews (CameraParameters &cameraParams, int imgWidth, int imgHe
         {
             if ( algParams.viewSelection ) {
                 cameraParams.viewSelectionSubset.push_back ( i );
-                printf("\taccepting camera %ld with angle\t %f degree (%f radians) and baseline %f\n", i, angle*180.0f/M_PI, angle, baseline);
+                //printf("\taccepting camera %ld with angle\t %f degree (%f radians) and baseline %f\n", i, angle*180.0f/M_PI, angle, baseline);
             }
             float min_range = (baseline/2.0f) / sin(maximum_angle_radians/2.0f);
             float max_range = (baseline/2.0f) / sin(minimum_angle_radians/2.0f);
@@ -483,10 +483,13 @@ static void selectViews (CameraParameters &cameraParams, int imgWidth, int imgHe
         return;
     }
     if (cameraParams.viewSelectionSubset.size() >= maximum_view) {
+        printf("Too many camera, randomly selecting only %d of them (modify with --max_views=<number>)\n", maximum_view);
         std::srand ( unsigned ( std::time(0) ) );
         std::random_shuffle( cameraParams.viewSelectionSubset.begin(), cameraParams.viewSelectionSubset.end() ); // shuffle elements of v
         cameraParams.viewSelectionSubset.erase (cameraParams.viewSelectionSubset.begin()+maximum_view,cameraParams.viewSelectionSubset.end());
     }
+    //for (auto i : cameraParams.viewSelectionSubset )
+        //printf("\taccepting camera %d\n", i);
 }
 
 static void delTexture (int num, cudaTextureObject_t texs[], cudaArray *cuArray[])
