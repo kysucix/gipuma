@@ -1,9 +1,12 @@
 #pragma once
+
+#include "helper_cuda.h"
+
 class Managed {
 public:
   void *operator new(size_t len) {
     void *ptr;
-    cudaMallocManaged(&ptr, len);
+    checkCudaErrors(cudaMallocManaged(&ptr, len));
     return ptr;
   }
 
