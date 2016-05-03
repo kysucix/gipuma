@@ -1,6 +1,3 @@
-/* vim: ft=cpp
- * */
-
 //#include <helper_math.h>
 #ifdef _WIN32
 #include <windows.h>
