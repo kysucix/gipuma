@@ -14,8 +14,13 @@
 #include <vector_types.h> // float4
 #include <math.h>
 #include <cuda.h>
+#include <vector>
+#include <string>
+#include <iostream>
 #include <curand_kernel.h>
 #include "vector_operations.h"
+#include "helper_cuda.h"
+
 
 //#define CENSUS
 #define SHARED
@@ -1831,32 +1836,35 @@ void gipuma(GlobalState &gs)
     cudaEvent_t start, stop;
     cudaEventCreate(&start);
     cudaEventCreate(&stop);
-    //printf("Run gipuma\n");
-    /*curandState* devStates;*/
-    cudaMalloc ( &gs.cs, rows*cols*sizeof( curandState ) );
+
+    checkCudaErrors(cudaMalloc ( &gs.cs, rows*cols*sizeof( curandState ) ));
 
     int count = 0;
     int i = 0;
 
-    cudaGetDeviceCount(&count);
+    checkCudaErrors(cudaGetDeviceCount(&count));
     if(count == 0) {
-        fprintf(stderr, "There is no device.\n");
+        fprintf(stderr, "There is no cuda capable device!\n");
         return ;
     }
 
+    std::vector<int> usableDevices;
+    std::vector<std::string> usableDeviceNames;
     for(i = 0; i < count; i++) {
         cudaDeviceProp prop;
         if(cudaGetDeviceProperties(&prop, i) == cudaSuccess) {
             if(prop.major >= 1) {
-                break;
+              usableDevices.push_back(i);
+              usableDeviceNames.push_back(std::string(prop.name));
             }
         }
     }
-    if(i == count) {
-        fprintf(stderr, "There is no device supporting CUDA.\n");
+    if(usableDevices.empty()) {
+        fprintf(stderr, "There is no cuda device supporting gipuma!\n");
         return ;
     }
-    cudaSetDevice(i);
+    std::cout << "Detected gipuma compatible device: " << usableDevices[0] << std::endl;;
+    checkCudaErrors(cudaSetDevice(usableDevices[0]));
     cudaDeviceSetLimit(cudaLimitPrintfFifoSize, 1024*128);
 
     //int SHARED_SIZE_W_host;
