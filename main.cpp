@@ -1,3 +1,5 @@
+#include "main.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -28,7 +30,6 @@
 #include "globalstate.h"
 #include "gipuma.h"
 
-#include "main.h"
 #include "fileIoUtils.h"
 #include "cameraGeometryUtils.h"
 #include "mathUtils.h"
@@ -114,9 +115,9 @@ static void print_help (char **argv)
     printf ( "\nUsage: %s <im1> <im2> ... [--parameter=<parameter>]\n", argv[0] );
 }
 
-static void get_subfolders(
+static void get_directory_entries(
                            const char *dirname,
-                           vector<string> &subfolders)
+                           vector<string> &directory_entries)
 {
     DIR *dir;
     struct dirent *ent;
@@ -137,7 +138,7 @@ static void get_subfolders(
                 if(strcmp(name,".") == 0 || strcmp(ent->d_name,"..") == 0)
                     continue;
                 //printf ("dir %s/\n", name);
-                subfolders.push_back(string(name));
+                directory_entries.push_back(string(name));
             }
         }
 
@@ -148,7 +149,7 @@ static void get_subfolders(
         printf ("Cannot open directory %s\n", dirname);
         exit (EXIT_FAILURE);
     }
-    sort ( subfolders.begin (), subfolders.end () );
+    sort ( directory_entries.begin (), directory_entries.end () );
 }
 
 /* process command line arguments
@@ -406,8 +407,7 @@ static int getParametersFromCommandLine ( int argc,
         inputFiles.images_folder = inputFiles.pmvs_folder + "/visualize/";
 
         inputFiles.img_filenames.clear();
-        vector<string> subfolders;
-        get_subfolders(inputFiles.images_folder.c_str(), inputFiles.img_filenames);
+        get_directory_entries(inputFiles.images_folder.c_str(), inputFiles.img_filenames);
 
         inputFiles.p_folder = inputFiles.pmvs_folder + "/txt/";
 
