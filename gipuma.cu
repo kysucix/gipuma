@@ -1839,34 +1839,6 @@ void gipuma(GlobalState &gs)
 
     checkCudaErrors(cudaMalloc ( &gs.cs, rows*cols*sizeof( curandState ) ));
 
-    int count = 0;
-    int i = 0;
-
-    checkCudaErrors(cudaGetDeviceCount(&count));
-    if(count == 0) {
-        fprintf(stderr, "There is no cuda capable device!\n");
-        return ;
-    }
-
-    std::vector<int> usableDevices;
-    std::vector<std::string> usableDeviceNames;
-    for(i = 0; i < count; i++) {
-        cudaDeviceProp prop;
-        if(cudaGetDeviceProperties(&prop, i) == cudaSuccess) {
-            if(prop.major >= 1) {
-              usableDevices.push_back(i);
-              usableDeviceNames.push_back(std::string(prop.name));
-            }
-        }
-    }
-    if(usableDevices.empty()) {
-        fprintf(stderr, "There is no cuda device supporting gipuma!\n");
-        return ;
-    }
-    std::cout << "Detected gipuma compatible device: " << usableDevices[0] << std::endl;;
-    checkCudaErrors(cudaSetDevice(usableDevices[0]));
-    cudaDeviceSetLimit(cudaLimitPrintfFifoSize, 1024*128);
-
     //int SHARED_SIZE_W_host;
 #ifndef SHARED_HARDCODED
     int blocksize_w = gs.params->box_hsize + 1; // +1 for the gradient computation
