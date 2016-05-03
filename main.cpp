@@ -12,6 +12,10 @@
 #include <direct.h>
 #endif
 
+#include <vector>
+#include <string>
+#include <iostream>
+
 // Includes CUDA
 #include <cuda_runtime.h>
 #include <cuda.h>
@@ -649,6 +653,43 @@ static void addImageToTextureFloatGray (vector<Mat > &imgs, cudaTextureObject_t 
     }
     return;
 }
+
+static void selectCudaDevice ()
+{
+    int deviceCount = 0;
+    checkCudaErrors(cudaGetDeviceCount(&deviceCount));
+    if (deviceCount == 0) {
+        fprintf(stderr, "There is no cuda capable device!\n");
+        exit(EXIT_FAILURE);
+    } 
+    cout << "Detected " << deviceCount << " devices!" << endl;
+    std::vector<int> usableDevices;
+    std::vector<std::string> usableDeviceNames;
+    for (int i = 0; i < deviceCount; i++) {
+        cudaDeviceProp prop;
+        if (cudaGetDeviceProperties(&prop, i) == cudaSuccess) {
+            if (prop.major >= 3 && prop.minor >= 0) {
+                usableDevices.push_back(i);
+                usableDeviceNames.push_back(string(prop.name));
+            } else {
+                cout << "CUDA capable device " << string(prop.name)
+                     << " is only compute cabability " << prop.major << '.'
+                     << prop.minor << endl;
+            }
+        } else {
+            cout << "Could not check device properties for one of the cuda "
+                    "devices!" << endl;
+        }
+    }
+    if(usableDevices.empty()) {
+        fprintf(stderr, "There is no cuda device supporting gipuma!\n");
+        exit(EXIT_FAILURE);
+    }
+    cout << "Detected gipuma compatible device: " << usableDeviceNames[0] << endl;;
+    checkCudaErrors(cudaSetDevice(usableDevices[0]));
+    cudaDeviceSetLimit(cudaLimitPrintfFifoSize, 1024*128);
+}
+
 static int runGipuma ( InputFiles &inputFiles,
                                  OutputFiles &outputFiles,
                                  AlgorithmParameters &algParams,
@@ -1172,6 +1213,8 @@ int main(int argc, char **argv)
     int ret = getParametersFromCommandLine ( argc, argv, inputFiles, outputFiles, *algParams, gtParameters);
     if ( ret != 0 )
         return ret;
+
+    selectCudaDevice();
 
     Results results;
     ret = runGipuma ( inputFiles, outputFiles, *algParams, gtParameters, results);
