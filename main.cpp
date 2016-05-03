@@ -776,12 +776,11 @@ static int runGipuma ( InputFiles &inputFiles,
     }
 
     size_t avail;
-    size_t used;
     size_t total;
 
     GlobalState *gs = new GlobalState;
     //cudaMemGetInfo( &avail, &total );
-    //used = total - avail;
+    //size_t used = total - avail;
     //printf("Device memory used after GlobalState allocation: %fMB\n", used/1000000.0f);
     CameraParameters cameraParams = getCameraParameters ( *(gs->cameras), inputFiles, algParams.cam_scale);
 
@@ -911,8 +910,10 @@ static int runGipuma ( InputFiles &inputFiles,
     int64_t t = getTickCount ();
 
     cudaMemGetInfo( &avail, &total );
-    used = total - avail;
+    //{
+    //size_t used = total - avail;
     //printf("Device memory used: %fMB\n", used/1000000.0f);
+    //}
     // Copy images to texture memory
     //addImageToTextureUint (img_grayscale, gs->imgs);
     if (algParams.color_processing)
@@ -921,8 +922,10 @@ static int runGipuma ( InputFiles &inputFiles,
         addImageToTextureFloatGray (img_grayscale_float, gs->imgs, gs->cuArray);
 
     cudaMemGetInfo( &avail, &total );
-    used = total - avail;
+    //{
+    //size_t used = total - avail;
     //printf("Device memory used: %fMB\n", used/1000000.0f);
+    //}
     runcuda(*gs);
     Mat_<Vec3f> norm0 = Mat::zeros ( img_grayscale[0].rows, img_grayscale[0].cols, CV_32FC3 );
     Mat_<float> cudadisp = Mat::zeros ( img_grayscale[0].rows, img_grayscale[0].cols, CV_32FC1 );
@@ -1161,15 +1164,15 @@ int main(int argc, char **argv)
 
     InputFiles inputFiles;
     OutputFiles outputFiles;
-    AlgorithmParameters* algParams = new AlgorithmParameters;
+    AlgorithmParameters algParams;
     GTcheckParameters gtParameters;
 
-    int ret = getParametersFromCommandLine ( argc, argv, inputFiles, outputFiles, *algParams, gtParameters);
+    int ret = getParametersFromCommandLine ( argc, argv, inputFiles, outputFiles, algParams, gtParameters);
     if ( ret != 0 )
         return ret;
 
     Results results;
-    ret = runGipuma ( inputFiles, outputFiles, *algParams, gtParameters, results);
+    ret = runGipuma ( inputFiles, outputFiles, algParams, gtParameters, results);
 
     return 0;
 }
