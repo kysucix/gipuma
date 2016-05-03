@@ -3,6 +3,7 @@
 #include <string.h>
 #include <math.h>
 #include <ctime>
+#include <stdexcept>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -667,6 +668,10 @@ static int runGipuma ( InputFiles &inputFiles,
     mkdir ( outputFiles.parentFolder, 0777 );
 #endif
     char outputFolder[256];
+    if(inputFiles.img_filenames.empty())
+    {
+      throw std::runtime_error("There was a problem finding the input files!");
+    }
     string ref_name = inputFiles.img_filenames[0].substr ( 0, inputFiles.img_filenames[0].length() - 4 );
     sprintf ( outputFolder, "%s/%04d%02d%02d_%02d%02d%02d_%s", outputFiles.parentFolder, pTime->tm_year + 1900, pTime->tm_mon + 1, pTime->tm_mday, pTime->tm_hour, pTime->tm_min, pTime->tm_sec, ref_name.c_str () );
 #if defined(_WIN32)
