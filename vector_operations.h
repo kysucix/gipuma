@@ -1,5 +1,3 @@
-/* vim: ft=cpp
- * */
 #pragma once
 #include <vector_types.h> // float4
 static __device__ float4 operator*(float4 a, float4 b) {
