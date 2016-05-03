@@ -1859,7 +1859,7 @@ void gipuma(GlobalState &gs)
     cudaSetDevice(i);
     cudaDeviceSetLimit(cudaLimitPrintfFifoSize, 1024*128);
 
-    int SHARED_SIZE_W_host;
+    //int SHARED_SIZE_W_host;
 #ifndef SHARED_HARDCODED
     int blocksize_w = gs.params->box_hsize + 1; // +1 for the gradient computation
     int blocksize_h = gs.params->box_vsize + 1; // +1 for the gradient computation
@@ -1874,9 +1874,9 @@ void gipuma(GlobalState &gs)
     SHARED_SIZE_H = (TILE_H + WIN_RADIUS_H * 2);
     SHARED_SIZE = (SHARED_SIZE_W_m * SHARED_SIZE_H);
     cudaMemcpyToSymbol (SHARED_SIZE_W, &SHARED_SIZE_W_m, sizeof(SHARED_SIZE_W_m));
-    SHARED_SIZE_W_host = SHARED_SIZE_W_m;
+    //SHARED_SIZE_W_host = SHARED_SIZE_W_m;
 #else
-    SHARED_SIZE_W_host = SHARED_SIZE;
+    //SHARED_SIZE_W_host = SHARED_SIZE;
 #endif
     int shared_size_host = SHARED_SIZE;
 
