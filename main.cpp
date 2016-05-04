@@ -1218,11 +1218,11 @@ int main(int argc, char **argv)
 
     InputFiles inputFiles;
     OutputFiles outputFiles;
-    AlgorithmParameters algorithmParameters;
+    auto algorithmParameters = new AlgorithmParameters(); // Can't use RAII here because new over-ridden to alloc on gpu.
     GTcheckParameters groundTruthParameters;
 
     int ret = getParametersFromCommandLine(argc, argv, inputFiles, outputFiles,
-                                           algorithmParameters,
+                                           *algorithmParameters,
                                            groundTruthParameters);
     if ( ret != 0 )
         return ret;
@@ -1230,7 +1230,7 @@ int main(int argc, char **argv)
     selectCudaDevice();
 
     Results results;
-    ret = runGipuma(inputFiles, outputFiles, algorithmParameters,
+    ret = runGipuma(inputFiles, outputFiles, *algorithmParameters,
                     groundTruthParameters, results);
 
     return 0;
