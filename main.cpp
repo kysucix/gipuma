@@ -86,7 +86,7 @@ static void parse_bundler_3d_points ( const char *filename, std::vector<Vec3f> &
 }
 
 static void from_bundler_get_range (CameraParameters &cameraParams,
-                                    AlgorithmParameters &algParams,
+                                    AlgorithmParameters &algorithmParameters,
                                     const char *filename)
 {
     std::vector<Vec3f> point_list;
@@ -105,10 +105,10 @@ static void from_bundler_get_range (CameraParameters &cameraParams,
             max_depth = std::max(depth, max_depth);
         }
     }
-    if (algParams.depthMin == -1)
-        algParams.depthMin = min_depth - min_depth*0.4;
-    if (algParams.depthMax == -1)
-        algParams.depthMax = max_depth + max_depth*0.2;
+    if (algorithmParameters.depthMin == -1)
+        algorithmParameters.depthMin = min_depth - min_depth*0.4;
+    if (algorithmParameters.depthMax == -1)
+        algorithmParameters.depthMax = max_depth + max_depth*0.2;
 
     // For each camera compute minimum and maximum depth
 }
@@ -164,7 +164,7 @@ static int getParametersFromCommandLine ( int argc,
                                           char** argv,
                                           InputFiles &inputFiles,
                                           OutputFiles &outputFiles,
-                                          AlgorithmParameters &algParams,
+                                          AlgorithmParameters &algorithmParameters,
                                           GTcheckParameters &gt_parameters
                                         )
 {
@@ -224,14 +224,14 @@ static int getParametersFromCommandLine ( int argc,
         else if ( strncmp ( argv[i], algorithm_opt, strlen ( algorithm_opt ) ) == 0 )
         {
             char* _alg = argv[i] + strlen ( algorithm_opt );
-            algParams.algorithm = strcmp ( _alg, "pm" ) == 0 ? PM_COST :
+            algorithmParameters.algorithm = strcmp ( _alg, "pm" ) == 0 ? PM_COST :
             strcmp ( _alg, "ct" ) == 0 ? CENSUS_TRANSFORM :
             strcmp ( _alg, "sct" ) == 0 ? SPARSE_CENSUS :
             strcmp ( _alg, "ct_ss" ) == 0 ? CENSUS_SELFSIMILARITY :
             strcmp ( _alg, "adct" ) == 0 ? ADCENSUS :
             strcmp ( _alg, "adct_ss" ) == 0 ? ADCENSUS_SELFSIMILARITY :
             strcmp ( _alg, "pm_ss" ) == 0 ? PM_SELFSIMILARITY : -1;
-            if ( algParams.algorithm < 0 )
+            if ( algorithmParameters.algorithm < 0 )
             {
                 printf ( "Command-line parameter error: Unknown stereo algorithm\n\n" );
                 print_help (argv);
@@ -241,11 +241,11 @@ static int getParametersFromCommandLine ( int argc,
         else if ( strncmp ( argv[i], cost_comb_opt, strlen ( cost_comb_opt ) ) == 0 )
         {
             char* _alg = argv[i] + strlen ( algorithm_opt );
-            algParams.cost_comb = strcmp ( _alg, "all" ) == 0 ? COMB_ALL :
+            algorithmParameters.cost_comb = strcmp ( _alg, "all" ) == 0 ? COMB_ALL :
             strcmp ( _alg, "best_n" ) == 0 ? COMB_BEST_N :
             strcmp ( _alg, "angle" ) == 0 ? COMB_ANGLE :
             strcmp ( _alg, "good" ) == 0 ? COMB_GOOD : -1;
-            if ( algParams.cost_comb < 0 )
+            if ( algorithmParameters.cost_comb < 0 )
             {
                 printf ( "Command-line parameter error: Unknown cost combination method\n\n" );
                 print_help (argv);
@@ -254,8 +254,8 @@ static int getParametersFromCommandLine ( int argc,
         }
         else if ( strncmp ( argv[i], maxdisp_opt, strlen ( maxdisp_opt ) ) == 0 )
         {
-            if ( sscanf ( argv[i] + strlen ( maxdisp_opt ), "%f", &algParams.max_disparity ) != 1 ||
-                 algParams.max_disparity < 1  )
+            if ( sscanf ( argv[i] + strlen ( maxdisp_opt ), "%f", &algorithmParameters.max_disparity ) != 1 ||
+                 algorithmParameters.max_disparity < 1  )
             {
                 printf ( "Command-line parameter error: The max disparity (--maxdisparity=<...>) must be a positive integer \n" );
                 print_help (argv);
@@ -271,64 +271,64 @@ static int getParametersFromCommandLine ( int argc,
                 printf ( "Command-line parameter error: The block size (--blocksize=<...>) must be a positive odd number\n" );
                 return -1;
             }
-            algParams.box_hsize = k_size;
-            algParams.box_vsize = k_size;
+            algorithmParameters.box_hsize = k_size;
+            algorithmParameters.box_vsize = k_size;
         }
         else if ( strncmp ( argv[i], cost_good_factor_opt, strlen ( cost_good_factor_opt ) ) == 0 )
         {
-            sscanf ( argv[i] + strlen ( cost_good_factor_opt ), "%f", &algParams.good_factor );
+            sscanf ( argv[i] + strlen ( cost_good_factor_opt ), "%f", &algorithmParameters.good_factor );
         }
         else if ( strncmp ( argv[i], cost_tau_color_opt, strlen ( cost_tau_color_opt ) ) == 0 )
         {
-            sscanf ( argv[i] + strlen ( cost_tau_color_opt ), "%f", &algParams.tau_color );
+            sscanf ( argv[i] + strlen ( cost_tau_color_opt ), "%f", &algorithmParameters.tau_color );
         }
         else if ( strncmp ( argv[i], cost_tau_gradient_opt, strlen ( cost_tau_gradient_opt ) ) == 0 )
         {
-            sscanf ( argv[i] + strlen ( cost_tau_gradient_opt ), "%f", &algParams.tau_gradient );
+            sscanf ( argv[i] + strlen ( cost_tau_gradient_opt ), "%f", &algorithmParameters.tau_gradient );
         }
         else if ( strncmp ( argv[i], cost_alpha_opt, strlen ( cost_alpha_opt ) ) == 0 )
         {
-            sscanf ( argv[i] + strlen ( cost_alpha_opt ), "%f", &algParams.alpha );
+            sscanf ( argv[i] + strlen ( cost_alpha_opt ), "%f", &algorithmParameters.alpha );
         }
         else if ( strncmp ( argv[i], cost_gamma_opt, strlen ( cost_gamma_opt ) ) == 0 )
         {
-            sscanf ( argv[i] + strlen ( cost_gamma_opt ), "%f", &algParams.gamma );
+            sscanf ( argv[i] + strlen ( cost_gamma_opt ), "%f", &algorithmParameters.gamma );
         }
         else if ( strncmp ( argv[i], border_value, strlen ( border_value ) ) == 0 )
         {
-            sscanf ( argv[i] + strlen ( border_value ), "%d", &algParams.border_value );
+            sscanf ( argv[i] + strlen ( border_value ), "%d", &algorithmParameters.border_value );
         }
         else if ( strncmp ( argv[i], num_iterations_opt, strlen ( num_iterations_opt ) ) == 0 )
         {
-            sscanf ( argv[i] + strlen ( num_iterations_opt ), "%d", &algParams.iterations );
+            sscanf ( argv[i] + strlen ( num_iterations_opt ), "%d", &algorithmParameters.iterations );
         }
         else if ( strncmp ( argv[i], disparity_tolerance_opt, strlen ( disparity_tolerance_opt ) ) == 0 )
         {
-            sscanf ( argv[i] + strlen ( disparity_tolerance_opt ), "%f", &algParams.dispTol );
+            sscanf ( argv[i] + strlen ( disparity_tolerance_opt ), "%f", &algorithmParameters.dispTol );
         }
         else if ( strncmp ( argv[i], normal_tolerance_opt, strlen ( normal_tolerance_opt ) ) == 0 )
         {
-            sscanf ( argv[i] + strlen ( normal_tolerance_opt ), "%f", &algParams.normTol );
+            sscanf ( argv[i] + strlen ( normal_tolerance_opt ), "%f", &algorithmParameters.normTol );
         }
         else if ( strncmp ( argv[i], self_similariy_n_opt, strlen ( self_similariy_n_opt ) ) == 0 )
         {
-            sscanf ( argv[i] + strlen ( self_similariy_n_opt ), "%d", &algParams.self_similarity_n );
+            sscanf ( argv[i] + strlen ( self_similariy_n_opt ), "%d", &algorithmParameters.self_similarity_n );
         }
         else if ( strncmp ( argv[i], ct_epsilon_opt, strlen ( ct_epsilon_opt ) ) == 0 )
         {
-            sscanf ( argv[i] + strlen ( ct_epsilon_opt ), "%f", &algParams.census_epsilon );
+            sscanf ( argv[i] + strlen ( ct_epsilon_opt ), "%f", &algorithmParameters.census_epsilon );
         }
         else if ( strncmp ( argv[i], cam_scale_opt, strlen ( cam_scale_opt ) ) == 0 )
         {
-            sscanf ( argv[i] + strlen ( cam_scale_opt ), "%f", &algParams.cam_scale );
+            sscanf ( argv[i] + strlen ( cam_scale_opt ), "%f", &algorithmParameters.cam_scale );
         }
         else if ( strncmp ( argv[i], num_img_processed_opt, strlen ( num_img_processed_opt ) ) == 0 )
         {
-            sscanf ( argv[i] + strlen ( num_img_processed_opt ), "%d", &algParams.num_img_processed );
+            sscanf ( argv[i] + strlen ( num_img_processed_opt ), "%d", &algorithmParameters.num_img_processed );
         }
         else if ( strncmp ( argv[i], n_best_opt, strlen ( n_best_opt ) ) == 0 )
         {
-            sscanf ( argv[i] + strlen ( n_best_opt ), "%d", &algParams.n_best );
+            sscanf ( argv[i] + strlen ( n_best_opt ), "%d", &algorithmParameters.n_best );
         }
         else if ( strncmp ( argv[i], gtDepth_divFactor_opt, strlen ( gtDepth_divFactor_opt ) ) == 0 )
         {
@@ -344,30 +344,30 @@ static int getParametersFromCommandLine ( int argc,
         }
         else if ( strncmp ( argv[i], depth_min_opt, strlen ( depth_min_opt ) ) == 0 )
         {
-            sscanf ( argv[i] + strlen ( depth_min_opt ), "%f", &algParams.depthMin );
+            sscanf ( argv[i] + strlen ( depth_min_opt ), "%f", &algorithmParameters.depthMin );
         }
         else if ( strncmp ( argv[i], depth_max_opt, strlen ( depth_max_opt ) ) == 0 )
         {
-            sscanf ( argv[i] + strlen ( depth_max_opt ), "%f", &algParams.depthMax );
+            sscanf ( argv[i] + strlen ( depth_max_opt ), "%f", &algorithmParameters.depthMax );
         }
         else if ( strncmp ( argv[i], min_angle_opt, strlen ( min_angle_opt ) ) == 0 )
-            sscanf ( argv[i] + strlen ( min_angle_opt ), "%f", &algParams.min_angle );
+            sscanf ( argv[i] + strlen ( min_angle_opt ), "%f", &algorithmParameters.min_angle );
         else if ( strncmp ( argv[i], max_angle_opt, strlen ( max_angle_opt ) ) == 0 ) {
-            sscanf ( argv[i] + strlen ( max_angle_opt ), "%f", &algParams.max_angle );
+            sscanf ( argv[i] + strlen ( max_angle_opt ), "%f", &algorithmParameters.max_angle );
         }
         else if ( strncmp ( argv[i], pmvs_folder_opt, strlen ( pmvs_folder_opt ) ) == 0 ) {
             inputFiles.pmvs_folder = argv[++i];
         }
         else if ( strncmp ( argv[i], max_views_opt, strlen ( max_views_opt ) ) == 0 )
-            sscanf ( argv[i] + strlen ( max_views_opt ), "%u", &algParams.max_views );
+            sscanf ( argv[i] + strlen ( max_views_opt ), "%u", &algorithmParameters.max_views );
         else if ( strncmp ( argv[i], no_texture_sim_opt, strlen ( no_texture_sim_opt ) ) == 0 )
-            sscanf ( argv[i] + strlen ( no_texture_sim_opt ), "%f", &algParams.no_texture_sim );
+            sscanf ( argv[i] + strlen ( no_texture_sim_opt ), "%f", &algorithmParameters.no_texture_sim );
         else if ( strncmp ( argv[i], no_texture_per_opt, strlen ( no_texture_per_opt ) ) == 0 )
-            sscanf ( argv[i] + strlen ( no_texture_per_opt ), "%f", &algParams.no_texture_per );
+            sscanf ( argv[i] + strlen ( no_texture_per_opt ), "%f", &algorithmParameters.no_texture_per );
         else if ( strcmp ( argv[i], viewSelection_opt ) == 0 )
-            algParams.viewSelection = true;
+            algorithmParameters.viewSelection = true;
         else if ( strcmp ( argv[i], colorProc_opt ) == 0 )
-            algParams.color_processing = true;
+            algorithmParameters.color_processing = true;
         else if ( strcmp ( argv[i], "-o" ) == 0 )
             outputFiles.disparity_filename = argv[++i];
         else if ( strcmp ( argv[i], outputPath_opt ) == 0 )
@@ -404,7 +404,7 @@ static int getParametersFromCommandLine ( int argc,
         }
     }
     //cout << "Seed file is " << inputFiles.seed_file  << endl;
-    //cout << "Min angle is " << algParams.min_angle  << endl;
+    //cout << "Min angle is " << algorithmParameters.min_angle  << endl;
     if (inputFiles.pmvs_folder.size()>0)
     {
         cout << "Using pmvs information inside directory " << inputFiles.pmvs_folder  << endl;
@@ -427,7 +427,7 @@ static int getParametersFromCommandLine ( int argc,
 }
 
 static void selectViews(CameraParameters& cameraParams, int imgWidth,
-                        int imgHeight, AlgorithmParameters& algParams) {
+                        int imgHeight, AlgorithmParameters& algorithmParameters) {
     vector<Camera>& cameras = cameraParams.cameras;
     Camera ref = cameras[cameraParams.idRef];
 
@@ -438,18 +438,18 @@ static void selectViews(CameraParameters& cameraParams, int imgWidth,
 
     Vec3f viewVectorRef = getViewVector(ref, x, y);
 
-    float minimum_angle_degree = algParams.min_angle;
-    float maximum_angle_degree = algParams.max_angle;
+    float minimum_angle_degree = algorithmParameters.min_angle;
+    float maximum_angle_degree = algorithmParameters.max_angle;
 
-    unsigned int maximum_view = algParams.max_views;
+    unsigned int maximum_view = algorithmParameters.max_views;
     float minimum_angle_radians = minimum_angle_degree * M_PI / 180.0f;
     float maximum_angle_radians = maximum_angle_degree * M_PI / 180.0f;
     float min_depth = 9999;
     float max_depth = 0;
-    cout << "Accepting intersection angle of central rays from %f to %f "
-            "degrees, use --min_angle=<angle> and --max_angle=<angle> to "
-            "modify them" << minimum_angle_degree << maximum_angle_degree
-         << endl;
+    cout << "Accepting intersection angle of central rays from "
+         << minimum_angle_degree << " to " << maximum_angle_degree
+         << "degrees, use --min_angle=<angle> and --max_angle=<angle> to "
+            "modify them" << endl;
     for (size_t i = 1; i < cameras.size(); i++) {
         Vec3f vec = getViewVector(cameras[i], x, y);
 
@@ -468,8 +468,8 @@ static void selectViews(CameraParameters& cameraParams, int imgWidth,
         max_depth = std::max(max_range, max_depth);
     }
 
-    if (algParams.depthMin == -1) algParams.depthMin = min_depth;
-    if (algParams.depthMax == -1) algParams.depthMax = max_depth;
+    if (algorithmParameters.depthMin == -1) algorithmParameters.depthMin = min_depth;
+    if (algorithmParameters.depthMax == -1) algorithmParameters.depthMax = max_depth;
 
     if (cameraParams.viewSelectionSubset.size() >= maximum_view) {
         printf(
@@ -681,8 +681,8 @@ static void selectCudaDevice ()
 
 static int runGipuma ( InputFiles &inputFiles,
                                  OutputFiles &outputFiles,
-                                 AlgorithmParameters &algParams,
-                                 GTcheckParameters &gtParameters,
+                                 AlgorithmParameters &algorithmParameters,
+                                 GTcheckParameters &groundTruthParameters,
                                  Results &results
                                  )
 {
@@ -722,13 +722,13 @@ static int runGipuma ( InputFiles &inputFiles,
     }
 
     size_t numImages = inputFiles.img_filenames.size ();
-    algParams.num_img_processed = min ( ( int ) numImages, algParams.num_img_processed );
+    algorithmParameters.num_img_processed = min ( ( int ) numImages, algorithmParameters.num_img_processed );
 
     vector<Mat_<Vec3b> > img_color(numImages); // imgLeft_color, imgRight_color;
     vector<Mat_<uint8_t> > img_grayscale(numImages);
     for ( size_t i = 0; i < numImages; i++ ) {
         img_grayscale[i] = imread ( ( inputFiles.images_folder + inputFiles.img_filenames[i] ), IMREAD_GRAYSCALE );
-        if ( algParams.color_processing ) {
+        if ( algorithmParameters.color_processing ) {
             img_color[i] = imread ( ( inputFiles.images_folder + inputFiles.img_filenames[i] ), IMREAD_COLOR );
         }
 
@@ -746,7 +746,7 @@ static int runGipuma ( InputFiles &inputFiles,
     Mat_<float> groundTruthDispNocc;
     Mat_<Vec3f> groundTruthNormals;
     if ( !inputFiles.gt_filename.empty () ) {
-        gtParameters.gtCheck = true;
+        groundTruthParameters.gtCheck = true;
         printf ( "Opening GT image %s\n", inputFiles.gt_filename.c_str () );
         string ext = inputFiles.gt_filename.substr ( inputFiles.gt_filename.find_last_of ( "." ) + 1 );
         if ( ext.compare ( "pfm" ) == 0 ) {
@@ -764,16 +764,16 @@ static int runGipuma ( InputFiles &inputFiles,
         //cout << "depth min max: " << minVal << " " << maxVal << endl;
     }
     if ( !inputFiles.gt_nocc_filename.empty () ) {
-        if ( !gtParameters.gtCheck ) {
+        if ( !groundTruthParameters.gtCheck ) {
             printf ( "Command-line parameter error: Ground truth image (-gt) must be specified for use of nocc GT\n" );
             return -1;
         }
-        gtParameters.noccCheck = true;
+        groundTruthParameters.noccCheck = true;
         printf ( "Opening nocc GT image %s\n", inputFiles.gt_nocc_filename.c_str () );
         Mat gtImg = imread ( inputFiles.gt_nocc_filename, -1 );
         gtImg.convertTo ( groundTruthDispNocc, CV_32F );
     } else if ( !inputFiles.occ_filename.empty () ) {
-        if ( !gtParameters.gtCheck ) {
+        if ( !groundTruthParameters.gtCheck ) {
             printf ( "Command-line parameter error: Ground truth image (-gt) must be specified for use of occlusion mask\n" );
             return -1;
         }
@@ -817,14 +817,14 @@ static int runGipuma ( InputFiles &inputFiles,
     //cudaMemGetInfo( &avail, &total );
     //size_t used = total - avail;
     //printf("Device memory used after GlobalState allocation: %fMB\n", used/1000000.0f);
-    CameraParameters cameraParams = getCameraParameters ( *(gs->cameras), inputFiles, algParams.cam_scale);
+    CameraParameters cameraParams = getCameraParameters ( *(gs->cameras), inputFiles, algorithmParameters.cam_scale);
 
-    writeParametersToFile ( resultsFile, inputFiles, algParams, gtParameters, numPixels );
+    writeParametersToFile ( resultsFile, inputFiles, algorithmParameters, groundTruthParameters, numPixels );
 
     //allocation for disparity and normal stores
-    vector<Mat_<float> > disp ( algParams.num_img_processed );
-    vector<Mat_<uchar> > validCost ( algParams.num_img_processed );
-    for ( int i = 0; i < algParams.num_img_processed; i++ ) {
+    vector<Mat_<float> > disp ( algorithmParameters.num_img_processed );
+    vector<Mat_<uchar> > validCost ( algorithmParameters.num_img_processed );
+    for ( int i = 0; i < algorithmParameters.num_img_processed; i++ ) {
         disp[i] = Mat::zeros ( img_grayscale[0].rows, img_grayscale[0].cols, CV_32F );
         validCost[i] = Mat::zeros ( img_grayscale[0].rows, img_grayscale[0].cols, CV_8U );
     }
@@ -854,8 +854,8 @@ static int runGipuma ( InputFiles &inputFiles,
         //imwrite(outputPathTest,testImg_display);
     }
 
-    if (algParams.viewSelection) {
-        selectViews(cameraParams, cols, rows, algParams);
+    if (algorithmParameters.viewSelection) {
+        selectViews(cameraParams, cols, rows, algorithmParameters);
     } else {
         cameraParams.viewSelectionSubset.clear();
         for (size_t i = 1; i < cameraParams.cameras.size(); i++) {
@@ -875,14 +875,12 @@ static int runGipuma ( InputFiles &inputFiles,
                  << inputFiles.pmvs_folder + "/bundle.rd.out"
                  << " to obtain depth range" << endl;
             from_bundler_get_range(
-                cameraParams, algParams,
+                cameraParams, algorithmParameters,
                 (inputFiles.pmvs_folder + "/bundle.rd.out").c_str());
         }
     }
 
-    //cout << "Range of Minimum/Maximum depth is: " << algParams.depthMin << " " << algParams.depthMax << endl;
     int numSelViews = cameraParams.viewSelectionSubset.size ();
-
     ofstream myfile;
     myfile.open ( resultsFile, ios::out | ios::app );
     myfile << "\nNumber of selected views: " << numSelViews << endl;
@@ -898,25 +896,25 @@ static int runGipuma ( InputFiles &inputFiles,
     myfile.close ();
 
 
-    for ( int i = 0; i < algParams.num_img_processed; i++ ) {
-        cameraParams.cameras[i].depthMin = algParams.depthMin;
-        cameraParams.cameras[i].depthMax = algParams.depthMax;
+    for ( int i = 0; i < algorithmParameters.num_img_processed; i++ ) {
+        cameraParams.cameras[i].depthMin = algorithmParameters.depthMin;
+        cameraParams.cameras[i].depthMax = algorithmParameters.depthMax;
 
-        gs->cameras->cameras[i].depthMin = algParams.depthMin;
-        gs->cameras->cameras[i].depthMax = algParams.depthMax;
+        gs->cameras->cameras[i].depthMin = algorithmParameters.depthMin;
+        gs->cameras->cameras[i].depthMax = algorithmParameters.depthMax;
 
-        algParams.min_disparity = disparityDepthConversion ( cameraParams.f, cameraParams.cameras[i].baseline, cameraParams.cameras[i].depthMax );
-        algParams.max_disparity = disparityDepthConversion ( cameraParams.f, cameraParams.cameras[i].baseline, cameraParams.cameras[i].depthMin );
+        algorithmParameters.min_disparity = disparityDepthConversion ( cameraParams.f, cameraParams.cameras[i].baseline, cameraParams.cameras[i].depthMax );
+        algorithmParameters.max_disparity = disparityDepthConversion ( cameraParams.f, cameraParams.cameras[i].baseline, cameraParams.cameras[i].depthMin );
 
 
         double minVal, maxVal;
         minMaxLoc ( disp[i], &minVal, &maxVal );
     }
-    cout << "Range of Minimum/Maximum depth is: " << algParams.min_disparity << " " << algParams.max_disparity << ", change it with --depth_min=<value> and  --depth_max=<value>" <<endl;
+    cout << "Range of Minimum/Maximum depth is: " << algorithmParameters.min_disparity << " " << algorithmParameters.max_disparity << ", change it with --depth_min=<value> and  --depth_max=<value>" <<endl;
 
     // run gpu run
     // Init parameters
-    gs->params = &algParams;
+    gs->params = &algorithmParameters;
 
     gs->cameras->viewSelectionSubsetNumber = numSelViews;
 
@@ -943,7 +941,7 @@ static int runGipuma ( InputFiles &inputFiles,
     {
         img_grayscale[i].convertTo(img_grayscale_float[i], CV_32FC1); // or CV_32F works (too)
         img_grayscale[i].convertTo(img_grayscale_uint[i], CV_16UC1); // or CV_32F works (too)
-        if(algParams.color_processing) {
+        if(algorithmParameters.color_processing) {
             vector<Mat_<float> > rgbChannels ( 3 );
             img_color_float_alpha[i] = Mat::zeros ( img_grayscale[0].rows, img_grayscale[0].cols, CV_32FC4 );
             img_color[i].convertTo (img_color_float[i], CV_32FC3); // or CV_32F works (too)
@@ -967,7 +965,7 @@ static int runGipuma ( InputFiles &inputFiles,
     //}
     // Copy images to texture memory
     //addImageToTextureUint (img_grayscale, gs->imgs);
-    if (algParams.color_processing)
+    if (algorithmParameters.color_processing)
         addImageToTextureFloatColor (img_color_float_alpha, gs->imgs, gs->cuArray);
     else
         addImageToTextureFloatGray (img_grayscale_float, gs->imgs, gs->cuArray);
@@ -1023,15 +1021,15 @@ static int runGipuma ( InputFiles &inputFiles,
 
     Mat_<float> distImg;
 
-    for ( size_t i = 0; i < (size_t) algParams.num_img_processed; i++ ) {
+    for ( size_t i = 0; i < (size_t) algorithmParameters.num_img_processed; i++ ) {
         // store 3D coordinates to file
-        CameraParameters camParamsNotTransformed = getCameraParameters ( *(gs->cameras), inputFiles, algParams.cam_scale, false );
+        CameraParameters camParamsNotTransformed = getCameraParameters ( *(gs->cameras), inputFiles, algorithmParameters.cam_scale, false );
         char plyFile[256];
         sprintf ( plyFile, "%s/3d_model%lu.ply", outputFolder, i );
 
         storePlyFileBinary ( plyFile, disp0, norm0, img_grayscale[i], camParamsNotTransformed.cameras[i], distImg );
         Mat dist_display, dist_display_col;
-        getDisparityForDisplay ( distImg, dist_display, dist_display_col, algParams.max_disparity );
+        getDisparityForDisplay ( distImg, dist_display, dist_display_col, algorithmParameters.max_disparity );
         writeImageToFile ( outputFolder, "dist", dist_display );
         writeImageToFile ( "./", "cudadisp", dist_display );
         writeImageToFile ( outputFolder, "dist_col", dist_display_col );
@@ -1044,7 +1042,7 @@ static int runGipuma ( InputFiles &inputFiles,
     planes_occFilling = Mat::zeros ( img_grayscale[0].rows, img_grayscale[0].cols, CV_32FC3 );
 
     uint32_t numValidPixels = 0;
-    if ( algParams.num_img_processed >= 2 ) {
+    if ( algorithmParameters.num_img_processed >= 2 ) {
         Mat_<float> disp0Temp = disp[0];
         Mat_<float> disp1Temp = disp[1];
         if ( !cameraParams.rectified ) {
@@ -1060,14 +1058,14 @@ static int runGipuma ( InputFiles &inputFiles,
     }
     Mat_<float> disp_median = cudadisp;
 
-    if ( algParams.num_img_processed >= 2 ) {
+    if ( algorithmParameters.num_img_processed >= 2 ) {
         Mat disp_display, disp_col, disp_nocc_display, disp_nocc_col;
-        getDisparityForDisplay ( disp_occFilling, disp_display, disp_col, algParams.max_disparity );
+        getDisparityForDisplay ( disp_occFilling, disp_display, disp_col, algorithmParameters.max_disparity );
         writeImageToFile ( outputFolder, "dispOccFilling", disp_col );
         disp_display.release ();
         disp_col.release ();
 
-        getDisparityForDisplay ( disp_nocc, disp_nocc_display, disp_nocc_col, algParams.max_disparity );
+        getDisparityForDisplay ( disp_nocc, disp_nocc_display, disp_nocc_col, algorithmParameters.max_disparity );
         writeImageToFile ( outputFolder, "dispNocc", disp_nocc_display );
         writeImageToFile ( outputFolder, "dispNocc_color", disp_nocc_col );
         disp_nocc_display.release ();
@@ -1091,7 +1089,7 @@ static int runGipuma ( InputFiles &inputFiles,
     cout << "Total runtime including disk i/o: " << rt << "sec" << endl;
 
     //ground truth comparison
-    if ( gtParameters.gtCheck ) {
+    if ( groundTruthParameters.gtCheck ) {
 
         //postprocessing
         Mat_<uchar> valid = Mat::zeros ( img_grayscale[0].rows, img_grayscale[0].cols, CV_8U );
@@ -1105,10 +1103,10 @@ static int runGipuma ( InputFiles &inputFiles,
 
         //error after post processing
         float med_error, med_error2;
-        computeError ( groundTruthDisp, groundTruthDispNocc, disp_median, errorImg, errorImgNocc, errorImgNocc2, nonerrorImg, med_error, med_error2, errorNocc, errorValid, errorValidAll, gtParameters, valid, errorImgValid );
+        computeError ( groundTruthDisp, groundTruthDispNocc, disp_median, errorImg, errorImgNocc, errorImgNocc2, nonerrorImg, med_error, med_error2, errorNocc, errorValid, errorValidAll, groundTruthParameters, valid, errorImgValid );
 
         //error before post processing
-        results.valid_pixels_gt = computeError ( groundTruthDisp, groundTruthDispNocc, disp0, errorImg, errorImgNocc, errorImgNocc2, nonerrorImg, error, error2, errorNocc, errorValid, errorValidAll, gtParameters, valid, errorImgValid );
+        results.valid_pixels_gt = computeError ( groundTruthDisp, groundTruthDispNocc, disp0, errorImg, errorImgNocc, errorImgNocc2, nonerrorImg, error, error2, errorNocc, errorValid, errorValidAll, groundTruthParameters, valid, errorImgValid );
 
         float normalError = 0.0f;
         float normalError2 = 0.0f;
@@ -1169,20 +1167,20 @@ static int runGipuma ( InputFiles &inputFiles,
         cout << "Error (valid occlusion check, div by #GT points): " << errorValidAll << endl;
     }
 
-    if ( algParams.num_img_processed >= 2 ) {
+    if ( algorithmParameters.num_img_processed >= 2 ) {
         Mat planes_display, planescalib_display, planescalib_display2;
 
         writeImageToFile ( outputFolder, "normals", planes_display );
         planes_display.release ();
     }
 
-    if ( gtParameters.gtCheck ) {
+    if ( groundTruthParameters.gtCheck ) {
         Mat gt_col;
         double minVal, maxVal;
         minMaxLoc ( groundTruthDisp, &minVal, &maxVal );
         cout << "minmax" << minVal << " " << maxVal << endl;
         Mat gt8;
-        groundTruthDisp.convertTo ( gt8, CV_8U, 255.f / ( float ) ( algParams.max_disparity * gtParameters.divFactor ) );
+        groundTruthDisp.convertTo ( gt8, CV_8U, 255.f / ( float ) ( algorithmParameters.max_disparity * groundTruthParameters.divFactor ) );
         minMaxLoc ( gt8, &minVal, &maxVal );
         cout << "minmax" << minVal << " " << maxVal << endl;
         applyColorMap ( gt8, gt_col, COLORMAP_JET );
@@ -1193,9 +1191,9 @@ static int runGipuma ( InputFiles &inputFiles,
     //used = total - avail;
     //printf("Device memory used: %fMB\n", used/1000000.0f);
     // Free memory
-    delTexture (algParams.num_img_processed, gs->imgs, gs->cuArray);
+    delTexture (algorithmParameters.num_img_processed, gs->imgs, gs->cuArray);
     delete gs;
-    delete &algParams;
+    delete &algorithmParameters;
     cudaDeviceSynchronize();
 
     //cudaMemGetInfo( &avail, &total );
@@ -1215,17 +1213,20 @@ int main(int argc, char **argv)
 
     InputFiles inputFiles;
     OutputFiles outputFiles;
-    AlgorithmParameters algParams;
-    GTcheckParameters gtParameters;
+    AlgorithmParameters algorithmParameters;
+    GTcheckParameters groundTruthParameters;
 
-    int ret = getParametersFromCommandLine ( argc, argv, inputFiles, outputFiles, algParams, gtParameters);
+    int ret = getParametersFromCommandLine(argc, argv, inputFiles, outputFiles,
+                                           algorithmParameters,
+                                           groundTruthParameters);
     if ( ret != 0 )
         return ret;
 
     selectCudaDevice();
 
     Results results;
-    ret = runGipuma ( inputFiles, outputFiles, algParams, gtParameters, results);
+    ret = runGipuma(inputFiles, outputFiles, algorithmParameters,
+                    groundTruthParameters, results);
 
     return 0;
 }
