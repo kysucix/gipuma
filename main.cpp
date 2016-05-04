@@ -426,18 +426,18 @@ static int getParametersFromCommandLine ( int argc,
     return 0;
 }
 
-static void selectViews (CameraParameters &cameraParams, int imgWidth, int imgHeight, AlgorithmParameters &algParams ) {
-    vector<Camera> &cameras = cameraParams.cameras;
+static void selectViews(CameraParameters& cameraParams, int imgWidth,
+                        int imgHeight, AlgorithmParameters& algParams) {
+    vector<Camera>& cameras = cameraParams.cameras;
     Camera ref = cameras[cameraParams.idRef];
 
     int x = imgWidth / 2;
     int y = imgHeight / 2;
 
-    cameraParams.viewSelectionSubset.clear ();
+    cameraParams.viewSelectionSubset.clear();
 
-    Vec3f viewVectorRef = getViewVector ( ref, x, y);
+    Vec3f viewVectorRef = getViewVector(ref, x, y);
 
-    // TODO hardcoded value makes it a parameter
     float minimum_angle_degree = algParams.min_angle;
     float maximum_angle_degree = algParams.max_angle;
 
@@ -446,55 +446,44 @@ static void selectViews (CameraParameters &cameraParams, int imgWidth, int imgHe
     float maximum_angle_radians = maximum_angle_degree * M_PI / 180.0f;
     float min_depth = 9999;
     float max_depth = 0;
-    if ( algParams.viewSelection )
-        printf("Accepting intersection angle of central rays from %f to %f degrees, use --min_angle=<angle> and --max_angle=<angle> to modify them\n", minimum_angle_degree, maximum_angle_degree);
-    for ( size_t i = 1; i < cameras.size (); i++ ) {
-        //if ( !algParams.viewSelection ) { //select all views, dont perform selection
-            //cameraParams.viewSelectionSubset.push_back ( i );
-            //continue;
-        //}
+    cout << "Accepting intersection angle of central rays from %f to %f "
+            "degrees, use --min_angle=<angle> and --max_angle=<angle> to "
+            "modify them" << minimum_angle_degree << maximum_angle_degree
+         << endl;
+    for (size_t i = 1; i < cameras.size(); i++) {
+        Vec3f vec = getViewVector(cameras[i], x, y);
 
-        Vec3f vec = getViewVector ( cameras[i], x, y);
-
-        float baseline = norm (cameras[0].C, cameras[i].C);
-        float angle = getAngle ( viewVectorRef, vec );
-        if ( angle > minimum_angle_radians &&
-             angle < maximum_angle_radians ) //0.6 select if angle between 5.7 and 34.8 (0.6) degrees (10 and 30 degrees suggested by some paper)
+        float baseline = norm(cameras[0].C, cameras[i].C);
+        float angle = getAngle(viewVectorRef, vec);
+        if (angle > minimum_angle_radians &&
+            angle < maximum_angle_radians)  // 0.6 select if angle between 5.7
+                                            // and 34.8 (0.6) degrees (10 and 30
+                                            // degrees suggested by some paper)
         {
-            if ( algParams.viewSelection ) {
-                cameraParams.viewSelectionSubset.push_back ( i );
-                //printf("\taccepting camera %ld with angle\t %f degree (%f radians) and baseline %f\n", i, angle*180.0f/M_PI, angle, baseline);
-            }
-            float min_range = (baseline/2.0f) / sin(maximum_angle_radians/2.0f);
-            float max_range = (baseline/2.0f) / sin(minimum_angle_radians/2.0f);
-            min_depth = std::min(min_range, min_depth);
-            max_depth = std::max(max_range, max_depth);
-            //printf("Min max ranges are %f %f\n", min_range, max_range);
-            //printf("Min max depth are %f %f\n", min_depth, max_depth);
+            cameraParams.viewSelectionSubset.push_back(i);
         }
-        //else
-            //printf("Discarding camera %ld with angle\t %f degree (%f radians) and baseline, %f\n", i, angle*180.0f/M_PI, angle, baseline);
+        float min_range = (baseline / 2.0f) / sin(maximum_angle_radians / 2.0f);
+        float max_range = (baseline / 2.0f) / sin(minimum_angle_radians / 2.0f);
+        min_depth = std::min(min_range, min_depth);
+        max_depth = std::max(max_range, max_depth);
     }
 
-    if (algParams.depthMin == -1)
-        algParams.depthMin = min_depth;
-    if (algParams.depthMax == -1)
-        algParams.depthMax = max_depth;
+    if (algParams.depthMin == -1) algParams.depthMin = min_depth;
+    if (algParams.depthMax == -1) algParams.depthMax = max_depth;
 
-    if (!algParams.viewSelection) {
-        cameraParams.viewSelectionSubset.clear();
-        for ( size_t i = 1; i < cameras.size (); i++ )
-            cameraParams.viewSelectionSubset.push_back ( i );
-        return;
-    }
     if (cameraParams.viewSelectionSubset.size() >= maximum_view) {
-        printf("Too many camera, randomly selecting only %d of them (modify with --max_views=<number>)\n", maximum_view);
-        std::srand ( unsigned ( std::time(0) ) );
-        std::random_shuffle( cameraParams.viewSelectionSubset.begin(), cameraParams.viewSelectionSubset.end() ); // shuffle elements of v
-        cameraParams.viewSelectionSubset.erase (cameraParams.viewSelectionSubset.begin()+maximum_view,cameraParams.viewSelectionSubset.end());
+        printf(
+            "Too many camera, randomly selecting only %d of them (modify with "
+            "--max_views=<number>)\n",
+            maximum_view);
+        std::srand(unsigned(std::time(0)));
+        std::random_shuffle(
+            cameraParams.viewSelectionSubset.begin(),
+            cameraParams.viewSelectionSubset.end());  // shuffle elements of v
+        cameraParams.viewSelectionSubset.erase(
+            cameraParams.viewSelectionSubset.begin() + maximum_view,
+            cameraParams.viewSelectionSubset.end());
     }
-    //for (auto i : cameraParams.viewSelectionSubset )
-        //printf("\taccepting camera %d\n", i);
 }
 
 static void delTexture (int num, cudaTextureObject_t texs[], cudaArray *cuArray[])
@@ -840,7 +829,7 @@ static int runGipuma ( InputFiles &inputFiles,
         validCost[i] = Mat::zeros ( img_grayscale[0].rows, img_grayscale[0].cols, CV_8U );
     }
 
-        Mat testImg_display;
+    Mat testImg_display;
     //visualize normals on a halfsphere (just for comparision with normal result image)
     {
         int sizeN = cols/8;
@@ -865,19 +854,35 @@ static int runGipuma ( InputFiles &inputFiles,
         //imwrite(outputPathTest,testImg_display);
     }
 
-
-    selectViews ( cameraParams, cols, rows, algParams);
-
-    if (inputFiles.pmvs_folder.size()>0) {
-        cout << "Using bundler file " << inputFiles.pmvs_folder + "/bundle.rd.out" << " to obtain depth range" << endl;
-        from_bundler_get_range (cameraParams, algParams, (inputFiles.pmvs_folder + "/bundle.rd.out").c_str());
+    if (algParams.viewSelection) {
+        selectViews(cameraParams, cols, rows, algParams);
+    } else {
+        cameraParams.viewSelectionSubset.clear();
+        for (size_t i = 1; i < cameraParams.cameras.size(); i++) {
+            cameraParams.viewSelectionSubset.push_back(i);
+        }
     }
 
+    auto file_exists = [](string fileName) -> bool {
+        std::ifstream infile(fileName);
+        return infile.good();
+    };
+
+    if (inputFiles.pmvs_folder.size() > 0) {
+        string bundlerFileName = inputFiles.pmvs_folder + "/bundle.rd.out";
+        if (file_exists(bundlerFileName)) {
+            cout << "Using bundler file "
+                 << inputFiles.pmvs_folder + "/bundle.rd.out"
+                 << " to obtain depth range" << endl;
+            from_bundler_get_range(
+                cameraParams, algParams,
+                (inputFiles.pmvs_folder + "/bundle.rd.out").c_str());
+        }
+    }
 
     //cout << "Range of Minimum/Maximum depth is: " << algParams.depthMin << " " << algParams.depthMax << endl;
     int numSelViews = cameraParams.viewSelectionSubset.size ();
 
-    cout << "Total number of images used: " << numSelViews << endl;
     ofstream myfile;
     myfile.open ( resultsFile, ios::out | ios::app );
     myfile << "\nNumber of selected views: " << numSelViews << endl;
