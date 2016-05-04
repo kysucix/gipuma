@@ -858,7 +858,7 @@ static int runGipuma ( InputFiles &inputFiles,
         selectViews(cameraParams, cols, rows, algorithmParameters);
     } else {
         cameraParams.viewSelectionSubset.clear();
-        for (size_t i = 1; i < cameraParams.cameras.size(); i++) {
+        for (size_t i = 0; i < cameraParams.cameras.size(); i++) {
             cameraParams.viewSelectionSubset.push_back(i);
         }
     }
@@ -895,22 +895,27 @@ static int runGipuma ( InputFiles &inputFiles,
     myfile << "\n\n";
     myfile.close ();
 
-
-    for ( int i = 0; i < algorithmParameters.num_img_processed; i++ ) {
+    cout << "Range of Minimum/Maximum depth is: "
+         << algorithmParameters.depthMin << " " << algorithmParameters.depthMax
+         << ", change it with --depth_min=<value> and  --depth_max=<value>"
+         << endl;
+    for (int i = 0; i < algorithmParameters.num_img_processed; i++) {
         cameraParams.cameras[i].depthMin = algorithmParameters.depthMin;
         cameraParams.cameras[i].depthMax = algorithmParameters.depthMax;
 
         gs->cameras->cameras[i].depthMin = algorithmParameters.depthMin;
         gs->cameras->cameras[i].depthMax = algorithmParameters.depthMax;
 
-        algorithmParameters.min_disparity = disparityDepthConversion ( cameraParams.f, cameraParams.cameras[i].baseline, cameraParams.cameras[i].depthMax );
-        algorithmParameters.max_disparity = disparityDepthConversion ( cameraParams.f, cameraParams.cameras[i].baseline, cameraParams.cameras[i].depthMin );
-
+        algorithmParameters.min_disparity = disparityDepthConversion(
+            cameraParams.f, cameraParams.cameras[i].baseline,
+            cameraParams.cameras[i].depthMax);
+        algorithmParameters.max_disparity = disparityDepthConversion(
+            cameraParams.f, cameraParams.cameras[i].baseline,
+            cameraParams.cameras[i].depthMin);
 
         double minVal, maxVal;
-        minMaxLoc ( disp[i], &minVal, &maxVal );
+        minMaxLoc(disp[i], &minVal, &maxVal);
     }
-    cout << "Range of Minimum/Maximum depth is: " << algorithmParameters.min_disparity << " " << algorithmParameters.max_disparity << ", change it with --depth_min=<value> and  --depth_max=<value>" <<endl;
 
     // run gpu run
     // Init parameters
