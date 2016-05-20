@@ -12,6 +12,7 @@ Refer to the [wiki](https://github.com/kysucix/gipuma/wiki) for detailed documen
 - [Katrin Lasinger](mailto:katrin.lasinger@geod.baug.ethz.ch)
 
 &copy; 2015,2016 Silvano Galliani, Katrin Lasinger, ETH Zurich
+
 &copy; 2016 Silvano Galliani, ETH Zurich
 
 
