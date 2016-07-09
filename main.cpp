@@ -854,7 +854,7 @@ static int runGipuma ( InputFiles &inputFiles,
                 float xy = pow(x,2)+pow(y,2);
                 if(xy <= 1.0f){
                     float z = sqrt(1.0f-xy);
-                    normalTestImg(sizeN-i,sizeN-j) = Vec3f(-x,-y,-z);
+                    normalTestImg(sizeN-1-i,sizeN-1-j) = Vec3f(-x,-y,-z);
                 }
             }
         }
