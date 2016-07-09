@@ -41,7 +41,7 @@ struct AlgorithmParameters : public Managed{
          good_factor       (1.5f), // for cost aggregation/combination good: factor for truncation CUDA
         n_best             (2), // CUDA
         cost_comb          (1), // CUDA
-        viewSelection      (false), // Default has to be false, or user has no way to disable view selection
+        viewSelection      (true), // Default has to be false, or user has no way to disable view selection
         depthMin           (-1.0f), // CUDA
         depthMax           (-1.0f), // CUDA
         min_angle          (5.0f), // CUDA
