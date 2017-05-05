@@ -44,8 +44,8 @@ do
     quotedinput=`echo $inputdir | sed "s/ /\\\\ /"`
     echo -n $quotedinput
 
-    echo $prog ${image_list[@]} -images_folder "$inputdir" -p_folder $p_folder -output_folder $output_dir -no_display --algorithm=pm --ct_eps=2.5 --cam_scale=$scale --iterations=$iter --disp_tol=10 --norm_tol=0.2 --gtDepth_divisionFactor=1 --gtDepth_tolerance=0.1 --gtDepth_tolerance2=0.02 --blocksize=$blocksize --cost_gamma=$cost_gamma --cost_comb=best_n --n_best=$n_best --depth_max=$depth_max --depth_min=$depth_min -view_selection --min_angle=$min_angle --max_angle=$max_angle
-    $prog ${image_list[@]} -images_folder "$inputdir" -p_folder $p_folder -output_folder $output_dir -no_display --algorithm=pm --ct_eps=2.5 --cam_scale=$scale --iterations=$iter --disp_tol=10 --norm_tol=0.2 --gtDepth_divisionFactor=1 --gtDepth_tolerance=0.1 --gtDepth_tolerance2=0.02 --blocksize=$blocksize --cost_gamma=$cost_gamma --cost_comb=best_n --n_best=$n_best --depth_max=$depth_max --depth_min=$depth_min -view_selection --min_angle=$min_angle --max_angle=$max_angle
+    echo $prog ${image_list[@]} -images_folder "$inputdir" -p_folder $p_folder -output_folder $output_dir -no_display --cam_scale=$scale --iterations=$iter --blocksize=$blocksize --cost_gamma=$cost_gamma --cost_comb=best_n --n_best=$n_best --depth_max=$depth_max --depth_min=$depth_min -view_selection --min_angle=$min_angle --max_angle=$max_angle
+    $prog ${image_list[@]} -images_folder "$inputdir" -p_folder $p_folder -output_folder $output_dir -no_display --iterations=$iter --blocksize=$blocksize --cost_gamma=$cost_gamma --cost_comb=best_n --n_best=$n_best --depth_max=$depth_max --depth_min=$depth_min -view_selection --min_angle=$min_angle --max_angle=$max_angle
     let "count += 1"
     if [ $count -eq -1 ]
     then
