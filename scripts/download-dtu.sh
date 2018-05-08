@@ -9,4 +9,4 @@ function download_and_unzip() {
 }
 mkdir -p $UNZIP_DIR
 
-download_and_unzip http://roboimagedata.compute.dtu.dk/imagedata2/www/SampleSet.zip
+download_and_unzip http://roboimagedata2.compute.dtu.dk/data/MVS/SampleSet.zip
