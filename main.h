@@ -1,5 +1,11 @@
 #pragma once
 
+#ifdef _WIN32
+#define NOMINMAX
+#include <windows.h>
+#include <direct.h>
+#endif
+
 #include "opencv2/calib3d/calib3d.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/core/core.hpp"

@@ -7,10 +7,6 @@
 #include <ctime>
 #include <stdexcept>
 
-#ifdef _WIN32
-#include <windows.h>
-#include <direct.h>
-#endif
 
 #include <vector>
 #include <string>
@@ -28,7 +24,7 @@
 
 #include <sys/stat.h> // mkdir
 #include <sys/types.h> // mkdir
-#include <dirent.h> // opendir()
+#include "dirent.h" // opendir()
 
 #include "algorithmparameters.h"
 #include "globalstate.h"
