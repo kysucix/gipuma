@@ -37,8 +37,8 @@
 #define EXTRAPOINT
 #define EXTRAPOINT2
 
-//#define FORCEINLINE __forceinline__
-//#define FORCEINLINE
+//#define FORCEINLINE_GIPUMA __FORCEINLINE_GIPUMA__
+//#define FORCEINLINE_GIPUMA
 
 
 __device__ float K[16];
@@ -55,7 +55,7 @@ __managed__ int TILE_W;
 __managed__ int TILE_H;
 #endif
 
-/*__device__ FORCEINLINE __constant__ float4 camerasK[32];*/
+/*__device__ FORCEINLINE_GIPUMA __constant__ float4 camerasK[32];*/
 
 /* compute depth value from disparity or disparity value from depth
  * Input:  f         - focal length in pixel
@@ -63,12 +63,12 @@ __managed__ int TILE_H;
  *         d - either disparity or depth value
  * Output: either depth or disparity value
  */
-__device__ FORCEINLINE float disparityDepthConversion_cu ( const float &f, const float &baseline, const float &d ) {
+__device__ FORCEINLINE_GIPUMA float disparityDepthConversion_cu ( const float &f, const float &baseline, const float &d ) {
     return f * baseline / d;
 }
 
 // CHECKED
-__device__ FORCEINLINE void get3Dpoint_cu ( float4 * __restrict__ ptX, const Camera_cu &cam, const int2 &p, const float &depth ) {
+__device__ FORCEINLINE_GIPUMA void get3Dpoint_cu ( float4 * __restrict__ ptX, const Camera_cu &cam, const int2 &p, const float &depth ) {
     // in case camera matrix is not normalized: see page 162, then depth might not be the real depth but w and depth needs to be computed from that first
     const float4 pt = make_float4 (
                                    depth * (float)p.x     - cam.P_col34.x,
@@ -78,7 +78,7 @@ __device__ FORCEINLINE void get3Dpoint_cu ( float4 * __restrict__ ptX, const Cam
 
     matvecmul4 (cam.M_inv, pt, ptX);
 }
-__device__ FORCEINLINE void get3Dpoint_cu1 ( float4 * __restrict__ ptX, const Camera_cu &cam, const int2 &p) {
+__device__ FORCEINLINE_GIPUMA void get3Dpoint_cu1 ( float4 * __restrict__ ptX, const Camera_cu &cam, const int2 &p) {
     // in case camera matrix is not normalized: see page 162, then depth might not be the real depth but w and depth needs to be computed from that first
     float4 pt;
     pt.x = (float)p.x     - cam.P_col34.x;
@@ -89,11 +89,11 @@ __device__ FORCEINLINE void get3Dpoint_cu1 ( float4 * __restrict__ ptX, const Ca
 }
 // CHECKED
 //get d parameter of plane pi = [nT, d]T, which is the distance of the plane to the camera center
-__device__ FORCEINLINE float getPlaneDistance_cu ( const float4 &normal, const float4 &X ) {
+__device__ FORCEINLINE_GIPUMA float getPlaneDistance_cu ( const float4 &normal, const float4 &X ) {
     return -(dot4(normal,X));
 }
 // CHECKED
-__device__ FORCEINLINE static float getD_cu ( const float4 &normal,
+__device__ FORCEINLINE_GIPUMA static float getD_cu ( const float4 &normal,
                                               const int2 &p,
                                               const float &depth,
                                               const Camera_cu &cam ) {
@@ -110,7 +110,7 @@ __device__ FORCEINLINE static float getD_cu ( const float4 &normal,
     /*return getPlaneDistance_cu (normal, ptX);*/
 }
 // CHECKED
-__device__ FORCEINLINE void normalize_cu (float4 * __restrict__ v)
+__device__ FORCEINLINE_GIPUMA void normalize_cu (float4 * __restrict__ v)
 {
     const float normSquared = pow2(v->x) + pow2(v->y) + pow2(v->z);
     const float inverse_sqrt = rsqrtf (normSquared);
@@ -119,7 +119,7 @@ __device__ FORCEINLINE void normalize_cu (float4 * __restrict__ v)
     v->z *= inverse_sqrt;
 }
 //CHECKED
-__device__ FORCEINLINE void getViewVector_cu (float4 * __restrict__ v, const Camera_cu &camera, const int2 &p)
+__device__ FORCEINLINE_GIPUMA void getViewVector_cu (float4 * __restrict__ v, const Camera_cu &camera, const int2 &p)
 {
     get3Dpoint_cu1 (v, camera, p);
     sub((*v), camera.C4);
@@ -128,14 +128,14 @@ __device__ FORCEINLINE void getViewVector_cu (float4 * __restrict__ v, const Cam
     //v->y=0;
     //v->z=1;
 }
-__device__ FORCEINLINE static void vecOnHemisphere_cu ( float4 * __restrict__ v, const float4 &viewVector ) {
+__device__ FORCEINLINE_GIPUMA static void vecOnHemisphere_cu ( float4 * __restrict__ v, const float4 &viewVector ) {
     const float dp = dot4 ( (*v), viewVector );
     if ( dp > 0.0f ) {
         negate4(v);
     }
     return;
 }
-__device__ FORCEINLINE float curand_between (curandState *cs, const float &min, const float &max)
+__device__ FORCEINLINE_GIPUMA float curand_between (curandState *cs, const float &min, const float &max)
 {
     return (curand_uniform(cs) * (max-min) + min);
 }
@@ -145,7 +145,7 @@ __device__ FORCEINLINE float curand_between (curandState *cs, const float &min, 
  * Output: random unit vector
  */
 // CHECKED
-__device__ FORCEINLINE static void rndUnitVectorSphereMarsaglia_cu (float4 *v, curandState *cs) {
+__device__ FORCEINLINE_GIPUMA static void rndUnitVectorSphereMarsaglia_cu (float4 *v, curandState *cs) {
     float x = 1.0f;
     float y = 1.0f;
     float sum = 2.0f;
@@ -163,28 +163,28 @@ __device__ FORCEINLINE static void rndUnitVectorSphereMarsaglia_cu (float4 *v, c
     //v->z = -1;
 }
 //CHECKED
-__device__ FORCEINLINE static void rndUnitVectorOnHemisphere_cu ( float4 *v, const float4 &viewVector, curandState *cs ) {
+__device__ FORCEINLINE_GIPUMA static void rndUnitVectorOnHemisphere_cu ( float4 *v, const float4 &viewVector, curandState *cs ) {
     rndUnitVectorSphereMarsaglia_cu (v, cs);
     vecOnHemisphere_cu ( v,viewVector );
 };
 
-__device__ FORCEINLINE float l1_norm(float f) {
+__device__ FORCEINLINE_GIPUMA float l1_norm(float f) {
     return fabsf(f);
 }
-__device__ FORCEINLINE float l1_norm(float4 f) {
+__device__ FORCEINLINE_GIPUMA float l1_norm(float4 f) {
     return ( fabsf (f.x) +
              fabsf (f.y) +
              fabsf (f.z))*0.3333333f;
 
 }
-__device__ FORCEINLINE float l1_norm2(float4 f) {
+__device__ FORCEINLINE_GIPUMA float l1_norm2(float4 f) {
     return ( fabsf (f.x) +
              fabsf (f.y) +
              fabsf (f.z));
 
 }
 template< typename T >
-__device__ FORCEINLINE float weight_cu ( const T &c1, const T &c2, const float &gamma )
+__device__ FORCEINLINE_GIPUMA float weight_cu ( const T &c1, const T &c2, const float &gamma )
 {
     const float colorDis = l1_norm (  c1 -  c2 );
     return expf ( -colorDis / gamma ); ///[>0.33333333f));
@@ -193,7 +193,7 @@ __device__ FORCEINLINE float weight_cu ( const T &c1, const T &c2, const float &
 }
 
 // CHECKED
-__device__ FORCEINLINE void getCorrespondingHomographyPt_cu ( const float * __restrict__ H, int x, int y, float4 *ptf) {
+__device__ FORCEINLINE_GIPUMA void getCorrespondingHomographyPt_cu ( const float * __restrict__ H, int x, int y, float4 *ptf) {
     float4 pt;
     pt.x = __int2float_rn (x);
     pt.y = __int2float_rn (y);
@@ -204,7 +204,7 @@ __device__ FORCEINLINE void getCorrespondingHomographyPt_cu ( const float * __re
     return ;
 }
 // CHECKED
-__device__ FORCEINLINE void getCorrespondingPoint_cu ( const int2 &p, const float * __restrict__ H, float4 * __restrict__ ptf ) {
+__device__ FORCEINLINE_GIPUMA void getCorrespondingPoint_cu ( const int2 &p, const float * __restrict__ H, float4 * __restrict__ ptf ) {
     /*getCorrespondingHomographyPt_cu ( (const float * )H, x , y , pt );*/
     float4 pt;
     pt.x = __int2float_rn (p.x);
@@ -215,13 +215,13 @@ __device__ FORCEINLINE void getCorrespondingPoint_cu ( const int2 &p, const floa
 
     return ;
 }
-__device__ FORCEINLINE float colorDifferenceL1_cu ( float c1, float c2 )
+__device__ FORCEINLINE_GIPUMA float colorDifferenceL1_cu ( float c1, float c2 )
 {
     return abs ( c1-c2 );
 }
 
 template< typename T >
-__device__ FORCEINLINE float pmCostComputation_shared (
+__device__ FORCEINLINE_GIPUMA float pmCostComputation_shared (
                                                        const cudaTextureObject_t &l,
                                                        const T * __restrict__ tile_left,
                                                        const cudaTextureObject_t &r,
@@ -276,7 +276,7 @@ __device__ FORCEINLINE float pmCostComputation_shared (
     //return 3.0;
 }
 template< typename T >
-__device__ FORCEINLINE float pmCostComputation (
+__device__ FORCEINLINE_GIPUMA float pmCostComputation (
                                                 const cudaTextureObject_t &l,
                                                 const T * __restrict__ tile_left,
                                                 const cudaTextureObject_t &r,
@@ -318,7 +318,7 @@ __device__ FORCEINLINE float pmCostComputation (
     }
     //return 3.0;
 }
-__device__ FORCEINLINE void getHomography_real (const float *K1_inv,
+__device__ FORCEINLINE_GIPUMA void getHomography_real (const float *K1_inv,
                                                 const float *K2,
                                                 const float *R,
                                                 const float4 t,
@@ -336,7 +336,7 @@ __device__ FORCEINLINE void getHomography_real (const float *K1_inv,
     matmul_cu(K2,tmp2,H);// H = tmp * K2
     return;
 }
-__device__ FORCEINLINE void getHomography_cu ( const Camera_cu &from, const Camera_cu &to,
+__device__ FORCEINLINE_GIPUMA void getHomography_cu ( const Camera_cu &from, const Camera_cu &to,
                                                const float * __restrict__ K1_inv, const float * __restrict__ K2,
                                                const float4 &n, const float &d, float * __restrict__ H )
 {
@@ -359,7 +359,7 @@ __device__ FORCEINLINE void getHomography_cu ( const Camera_cu &from, const Came
  *        pNb      - intensity of current nb pixel in the kernel
  *        epsilon  - threshold for classifying as the same intensity (for original ct no epsilon is used --> epsilon=0)
  */
-__device__ FORCEINLINE uint8_t getCTbit_cu ( float p, float pNb, float eps ) {
+__device__ FORCEINLINE_GIPUMA uint8_t getCTbit_cu ( float p, float pNb, float eps ) {
     uint8_t bit = 1;
     if ( p - pNb > eps )
         bit = 0;
@@ -367,7 +367,7 @@ __device__ FORCEINLINE uint8_t getCTbit_cu ( float p, float pNb, float eps ) {
         bit = 2;
     return bit;
 }
-__device__ FORCEINLINE float ct_Arma_cu ( const cudaTextureObject_t &l,
+__device__ FORCEINLINE_GIPUMA float ct_Arma_cu ( const cudaTextureObject_t &l,
                                           const cudaTextureObject_t &r,
                                           const int2 &p,
                                           const int vRad,
@@ -453,7 +453,7 @@ __device__ float censusTransform_Arma_cu ( const cudaTextureObject_t &l,
  * cost computation of different cost functions
  */
 template< typename T >
-__device__ FORCEINLINE static float pmCost (
+__device__ FORCEINLINE_GIPUMA static float pmCost (
                                             const cudaTextureObject_t &l,
                                             const T * __restrict__ tile_left,
                                             const int2 tile_offset,
@@ -518,7 +518,7 @@ __device__ FORCEINLINE static float pmCost (
 }
 
 template< typename T >
-__device__ FORCEINLINE static float hasImageTexture (
+__device__ FORCEINLINE_GIPUMA static float hasImageTexture (
                                                    const cudaTextureObject_t &l,
                                                    const int2 &p,
                                                    const int &vRad,
@@ -547,7 +547,7 @@ __device__ FORCEINLINE static float hasImageTexture (
 }
 
 template< typename T >
-__device__ FORCEINLINE static float hasImageTexture_shared (
+__device__ FORCEINLINE_GIPUMA static float hasImageTexture_shared (
                                                    const cudaTextureObject_t &l,
                                                    const T * __restrict__ tile_left,
                                                    const int2 tile_offset,
@@ -583,7 +583,7 @@ __device__ FORCEINLINE static float hasImageTexture_shared (
         return true;
 }
 template< typename T >
-__device__ FORCEINLINE static float pmCost_shared (
+__device__ FORCEINLINE_GIPUMA static float pmCost_shared (
                                                    const cudaTextureObject_t &l,
                                                    const T * __restrict__ tile_left,
                                                    const int2 tile_offset,
@@ -681,7 +681,7 @@ __device__ FORCEINLINE static float pmCost_shared (
 
 
 // via https://stackoverflow.com/questions/2786899/fastest-sort-of-fixed-length-6-int-array
-static __device__ FORCEINLINE void sort_small(float * __restrict__ d,const int n)
+static __device__ FORCEINLINE_GIPUMA void sort_small(float * __restrict__ d,const int n)
 {
     int j;
     for (int i = 1; i < n; i++) {
@@ -691,7 +691,7 @@ static __device__ FORCEINLINE void sort_small(float * __restrict__ d,const int n
         d[j] = tmp;
     }
 }
-__device__ FORCEINLINE float getDepthFromPlane3_cu (const Camera_cu &cam,
+__device__ FORCEINLINE_GIPUMA float getDepthFromPlane3_cu (const Camera_cu &cam,
                                                     const float4 &n,
                                                     const float &d,
                                                     const int2 &p)
@@ -703,7 +703,7 @@ __device__ FORCEINLINE float getDepthFromPlane3_cu (const Camera_cu &cam,
                       *cam.alpha +
                       n.z*cam.fx);
 }
-__device__ FORCEINLINE float getDisparity_cu ( const float4 &normal,
+__device__ FORCEINLINE_GIPUMA float getDisparity_cu ( const float4 &normal,
                                                const float &d,
                                                const int2 &p,
                                                const Camera_cu &cam )
@@ -718,7 +718,7 @@ __device__ FORCEINLINE float getDisparity_cu ( const float4 &normal,
  * combines cost of all ref-to-img correspondences
  */
 template< typename T >
-__device__ FORCEINLINE static float pmCostMultiview_cu (
+__device__ FORCEINLINE_GIPUMA static float pmCostMultiview_cu (
                                                         const cudaTextureObject_t *images,
                                                         const T * __restrict__ tile_left,
                                                         const int2 tile_offset,
@@ -805,7 +805,7 @@ __device__ FORCEINLINE static float pmCostMultiview_cu (
     return cost;
 }
 
-__device__ FORCEINLINE float get_smoothness_at2 ( const float4 * __restrict__ state,
+__device__ FORCEINLINE_GIPUMA float get_smoothness_at2 ( const float4 * __restrict__ state,
                                                   const float4 &norm,
                                                   const float &depth,
                                                   const int2 p,
@@ -830,7 +830,7 @@ __device__ FORCEINLINE float get_smoothness_at2 ( const float4 * __restrict__ st
 disp >= camParams.cameras[REFERENCE].depthMin && disp <= camParams.cameras[REFERENCE].depthMax
 
 template< typename T >
-__device__ FORCEINLINE void spatialPropagation_cu ( const cudaTextureObject_t *imgs,
+__device__ FORCEINLINE_GIPUMA void spatialPropagation_cu ( const cudaTextureObject_t *imgs,
                                                     const T * __restrict__ tile_left,
                                                     const int2 &tile_offset,
                                                     const int2 &p,
@@ -887,7 +887,7 @@ __device__ FORCEINLINE void spatialPropagation_cu ( const cudaTextureObject_t *i
  * Output: dispOut - new disparity
  *         normOut - new normal
  */
-__device__ FORCEINLINE void getRndDispAndUnitVector_cu (
+__device__ FORCEINLINE_GIPUMA void getRndDispAndUnitVector_cu (
                                                         float disp,
                                                         const float4 norm,
                                                         float &dispOut,
@@ -926,7 +926,7 @@ __device__ FORCEINLINE void getRndDispAndUnitVector_cu (
     vecOnHemisphere_cu (  normOut, viewVector );
 }
 template< typename T >
-__device__ FORCEINLINE static void planeRefinement_cu (
+__device__ FORCEINLINE_GIPUMA static void planeRefinement_cu (
                                                        const cudaTextureObject_t *images,
                                                        const T * __restrict__ tile_left,
                                                        const int2 &p,
@@ -1120,7 +1120,7 @@ __global__ void gipuma_init_random (GlobalState &gs)
     return;
 }
 template< typename T >
-__device__ FORCEINLINE void gipuma_checkerboard_cu(GlobalState &gs, int2 p, const int2 tile_offset, int iter)
+__device__ FORCEINLINE_GIPUMA void gipuma_checkerboard_cu(GlobalState &gs, int2 p, const int2 tile_offset, int iter)
 {
     int box_hrad = (gs.params->box_hsize-1) / 2;
     int box_vrad = (gs.params->box_vsize-1) / 2;
@@ -1351,7 +1351,7 @@ __device__ FORCEINLINE void gipuma_checkerboard_cu(GlobalState &gs, int2 p, cons
 }
 
 template< typename T >
-__device__ FORCEINLINE void gipuma_checkerboard_spatialPropFar_cu(GlobalState &gs, int2 p, const int2 tile_offset, int iter)
+__device__ FORCEINLINE_GIPUMA void gipuma_checkerboard_spatialPropFar_cu(GlobalState &gs, int2 p, const int2 tile_offset, int iter)
 {
     int box_hrad = (gs.params->box_hsize-1) / 2;
     int box_vrad = (gs.params->box_vsize-1) / 2;
@@ -1469,7 +1469,7 @@ __device__ FORCEINLINE void gipuma_checkerboard_spatialPropFar_cu(GlobalState &g
 
 
 template< typename T >
-__device__ FORCEINLINE void gipuma_checkerboard_spatialPropClose_cu(GlobalState &gs, int2 p, const int2 tile_offset, int iter)
+__device__ FORCEINLINE_GIPUMA void gipuma_checkerboard_spatialPropClose_cu(GlobalState &gs, int2 p, const int2 tile_offset, int iter)
 {
     int box_hrad = (gs.params->box_hsize-1) / 2;
     int box_vrad = (gs.params->box_vsize-1) / 2;
@@ -1588,7 +1588,7 @@ __device__ FORCEINLINE void gipuma_checkerboard_spatialPropClose_cu(GlobalState 
 }
 
 template< typename T >
-__device__ FORCEINLINE void gipuma_checkerboard_planeRefinement_cu(GlobalState &gs, int2 p, const int2 tile_offset, int iter)
+__device__ FORCEINLINE_GIPUMA void gipuma_checkerboard_planeRefinement_cu(GlobalState &gs, int2 p, const int2 tile_offset, int iter)
 {
     int box_hrad = (gs.params->box_hsize-1) / 2;
     int box_vrad = (gs.params->box_vsize-1) / 2;

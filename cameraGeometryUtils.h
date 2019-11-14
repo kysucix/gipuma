@@ -201,10 +201,10 @@ CameraParameters getCameraParameters ( CameraParameters_cu &cpc,
         numCameras = inputFiles.img_filenames.size ();
         params.cameras.resize ( numCameras );
         for ( size_t i = 0; i < numCameras; i++ ) {
-            int lastindex = inputFiles.img_filenames[i].find_last_of(".");
+            size_t lastindex = inputFiles.img_filenames[i].find_last_of(".");
             string filename_without_extension = inputFiles.img_filenames[i].substr(0, lastindex);
             readPFileStrechaPmvs ( inputFiles.p_folder + filename_without_extension + ".txt",params.cameras[i].P );
-            unsigned found = inputFiles.img_filenames[i].find_last_of ( "." );
+            size_t found = inputFiles.img_filenames[i].find_last_of ( "." );
             //params.cameras[i].id = atoi ( inputFiles.img_filenames[i].substr ( 0,found ).c_str () );
             params.cameras[i].id = inputFiles.img_filenames[i].substr ( 0,found ).c_str ();
             // params.cameras[i].P = KMaros * params.cameras[i].P;
@@ -218,7 +218,7 @@ CameraParameters getCameraParameters ( CameraParameters_cu &cpc,
         params.cameras.resize ( numCameras );
         for ( size_t i = 0; i < numCameras; i++ ) {
             readPFileStrechaPmvs ( inputFiles.p_folder + inputFiles.img_filenames[i] + ".P",params.cameras[i].P );
-            unsigned found = inputFiles.img_filenames[i].find_last_of ( "." );
+            size_t found = inputFiles.img_filenames[i].find_last_of ( "." );
             //params.cameras[i].id = atoi ( inputFiles.img_filenames[i].substr ( 0,found ).c_str () );
             params.cameras[i].id = inputFiles.img_filenames[i].substr ( 0,found ).c_str ();
            // params.cameras[i].P = KMaros * params.cameras[i].P;

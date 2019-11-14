@@ -21,8 +21,8 @@
 #define REFERENCE 0
 #define MAXCOST 1000.0f
 
-#define FORCEINLINE __forceinline__
-//#define FORCEINLINE
+#define FORCEINLINE_GIPUMA __forceinline__
+//#define FORCEINLINE_GIPUMA
 
 #define pow2(x) ((x)*(x))
 #define pow3(x) ((x)*(x)*(x))

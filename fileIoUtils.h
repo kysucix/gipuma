@@ -117,7 +117,7 @@ static void readKRtFileMiddlebury(const string filename, vector<Camera> cameras,
     getline (myfile, line); // throw away first line
 
     int i=0;
-    int truei=-1;
+    size_t truei=-1;
     while( getline( myfile,line) )
     {
         /*cout << "Line is "<< line << endl;*/
