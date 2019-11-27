@@ -24,7 +24,12 @@
 
 #include <sys/stat.h> // mkdir
 #include <sys/types.h> // mkdir
-#include "dirent.h" // opendir()
+
+#ifdef WIN32
+#include <win32_dirent.h> // opendir()
+#else
+#include <dirent.h> // opendir()
+#endif
 
 #include "algorithmparameters.h"
 #include "globalstate.h"
