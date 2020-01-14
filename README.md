@@ -8,8 +8,8 @@ _S. Galliani, K. Lasinger and K. Schindler_, [**Massively Parallel Multiview Ste
 Refer to the [wiki](https://github.com/kysucix/gipuma/wiki) for detailed documentation and examples.
 
 ## Authors
-- [Silvano Galliani](mailto:silvano.galliani@geod.baug.ethz.ch)
-- [Katrin Lasinger](mailto:kysucix@dyne.org)
+- [Silvano Galliani](mailto:kysucix@dyne.org)
+- [Katrin Lasinger](mailto:katrin.lasinger@geod.baug.ethz.ch)
 
 &copy; 2015-2019 Silvano Galliani, Katrin Lasinger, ETH Zurich
 
