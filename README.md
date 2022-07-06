@@ -11,7 +11,7 @@ Refer to the [wiki](https://github.com/kysucix/gipuma/wiki) for detailed documen
 - [Silvano Galliani](mailto:kysucix@dyne.org)
 - [Katrin Lasinger](mailto:katrin.lasinger@geod.baug.ethz.ch)
 
-&copy; 2015-2020 Silvano Galliani, Katrin Lasinger, ETH Zurich
+&copy; 2015-2022 Silvano Galliani, Katrin Lasinger, ETH Zurich
 
 
 **IMPORTANT**: If you use this software please cite the following in any resulting publication:
